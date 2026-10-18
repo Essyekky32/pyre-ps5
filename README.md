@@ -2,16 +2,19 @@
 
 **PYRE turns a multi-step PS5 jailbreak into a single Windows program you double-click.**
 
-The pieces to jailbreak a PS5 already existed, and they're excellent. What they
-weren't was *easy*: run a Python script, point your console's DNS at a
-third-party server, wait for someone else's redirect page, then type your PC's
-address into it by hand, and hope the server you don't control stays up.
+The pieces to jailbreak a PS5 already existed, and they're excellent. The
+self-host route was already local: you ran a Python script, it told you which
+DNS address to use, you pointed your console at your own PC, and the guide and
+your payloads came from you.
 
-PYRE does all of that from one window on your own PC:
+**PYRE is that same thing, reskinned and turned into one Windows program** — no
+Python, no root, no command-line setup, and the DNS now blocks Sony and ads.
+
+It runs the same job from one window on your own PC:
 
 - **Hosts the exploit** to your console over your own network.
-- **Answers your console's DNS** itself — so there's no third-party DNS service
-  in the chain and nothing external to go down, change, or watch your traffic.
+- **Answers your console's DNS** itself — the console's guide and update traffic
+  goes through your PC, not through a service you don't control.
 - **Serves the guide over HTTPS** so the console's User's Guide lands on your PC.
 - **Blocks Sony** — update servers and telemetry are refused, so your console
   stays where you put it.
@@ -19,7 +22,7 @@ PYRE does all of that from one window on your own PC:
   forwarded to filtering resolvers. No blocklist to maintain.
 - **Hosts your payloads** — the ones you choose, served from beside the program.
 
-Nobody needs Python. Nobody needs to type an address into a stranger's page.
+Nobody needs Python, and nothing here is hosted by anyone but you.
 
 ---
 
