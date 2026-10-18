@@ -7,9 +7,9 @@
 //   * the payload transport: sendPayload from haze-sender.js (fetch -> length/ELF magic/SHA-256
 //                            check -> push to the console's loader on port 9021)
 //
-// Why this page exists: the cards page (additional.html) is static HTML with no script and
-// cannot send anything, and the live menu only exists inside the RUN PYRE document. This page
-// builds the primitive itself, so the payload list works as a launcher after a jailbreak.
+// Why this page exists: the live menu only exists inside the RUN PYRE document, so a separate
+// page that builds the primitive itself is the only way to have a working payload list you can
+// come back to after a jailbreak.
 //
 // It cannot conjure a loader. Port 9021 only listens once the kernel stage has run in this
 // console session, so on a cold boot every button fails fast with a plain explanation and
