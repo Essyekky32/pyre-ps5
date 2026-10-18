@@ -18,6 +18,24 @@
         "repeatable":  false
     },
     {
+        "name":  "ps5-app-dumper_v2.00.elf",
+        "title":  "PS5 App Dumper",
+        "description":  "Dump installed apps and games to USB storage. Starts automatically with RUN PYRE, with automatic dumping left off.",
+        "original":  "ps5-app-dumper_v2.00.elf",
+        "author":  "EchoStretch",
+        "repository":  "https://github.com/EchoStretch/ps5-app-dumper/releases/tag/v2.00",
+        "download":  "",
+        "version":  "2.00",
+        "fw":  null,
+        "id":  "dumper",
+        "bytes":  1344216,
+        "sha256":  "b6fea71afb8937fcd1a933116c620e989acba25b7049eaeaa00cdc1bd604d686",
+        "source":  "https://github.com/EchoStretch/ps5-app-dumper/releases/tag/v2.00",
+        "sourceArchive":  "",
+        "loaderOnly":  false,
+        "repeatable":  false
+    },
+    {
         "name":  "OmniPad-PS5-1.0.4-g7pro-b98.elf",
         "title":  "OmniPad",
         "description":  "USB controller payload. Verified working with the GameSir G7 Pro, GameSir G7 SE and Nintendo Switch Pro controllers on 13.60.",

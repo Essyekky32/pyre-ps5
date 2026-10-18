@@ -18,6 +18,19 @@ export const payloads = [
     "repeatable": false
   },
   {
+    "id": "dumper",
+    "title": "PS5 App Dumper",
+    "version": "2.00",
+    "file": "our-payloads/ps5-app-dumper_v2.00.elf",
+    "sha256": "b6fea71afb8937fcd1a933116c620e989acba25b7049eaeaa00cdc1bd604d686",
+    "bytes": 1344216,
+    "description": "Dump installed apps and games to USB storage. Starts automatically with RUN PYRE, with automatic dumping left off.",
+    "author": "EchoStretch",
+    "source": "https://github.com/EchoStretch/ps5-app-dumper/releases/tag/v2.00",
+    "loaderOnly": false,
+    "repeatable": false
+  },
+  {
     "id": "omnipad",
     "title": "OmniPad",
     "version": "1.0.4-g7pro-b98",

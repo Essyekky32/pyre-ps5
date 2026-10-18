@@ -3,7 +3,7 @@ PYRE - PS5 jailbreak self-host
 
 You are seeing this because Pyre is hosting the exploit on your PC.
 
-READ THIS FIRST: two things will happen, neither is a problem
+READ THIS FIRST: three things will happen, none is a problem
 -------------------------------------------------------------
 1. "Windows protected your PC" (SmartScreen)
    Pyre is not code-signed - a signing certificate costs real money and this is
@@ -15,6 +15,11 @@ READ THIS FIRST: two things will happen, neither is a problem
    Pyre needs it once. It offers you a download link - take it, install it, then
    run Pyre again. That is the ONLY thing to install. There is no Python, no
    Node, no scripts, nothing from a command line.
+
+3. A Windows Firewall question
+   Windows may ask whether Pyre can communicate on your networks. Click Allow.
+   If that one is cancelled, Windows quietly blocks Pyre and the console can
+   never reach it - even while Pyre says everything is running.
 
 START HERE
 ----------
@@ -38,7 +43,7 @@ READ NEXT
 ---------
 README-PYRE.md          what we changed, what is frozen, the caveats
 _FROZEN-MANIFEST.txt    SHA256 of all 84 untouched logic files
-README.md               upstream docs (untouched)
+UPSTREAM-README.md      upstream docs (untouched)
 
 FOLDERS
 -------
