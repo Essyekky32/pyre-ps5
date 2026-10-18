@@ -27,7 +27,7 @@ $entries = @(
   @{ id='np-fake-signin';  title='np-fake-signin';       ver='';                file='our-payloads/np-fake-signin-ps5.elf';               auth=''; src=''; desc='Spoofs PSN sign-in so the console stops nagging.' },
   @{ id='kstuff';          title='kstuff';               ver='1.11';            file='payloads/kstuff.elf';                               auth=''; src=''; desc='Kernel patch payload used by the RUN PYRE chain. Also pushable on its own from here.' },
   @{ id='shadowmount';     title='ShadowMountPlus';      ver='1.7beta3';        file='payloads/shadowmountplus.elf';                      auth='drakmor'; src=''; desc='Mounts game backups. Used by the RUN PYRE chain.' },
-  @{ id='etahen';          title='etaHEN';               ver='13.60';           file='payloads/etaHEN.elf';                               auth=''; src=''; desc='The homebrew enabler, built for firmware 13.60. Used by the RUN PYRE chain.' }
+  @{ id='etahen';          title='etaHEN';               ver='13.60';           file='payloads/etaHEN.elf';                               auth=''; src=''; desc='The homebrew enabler, built for firmware 13.60. Not sent automatically: launch it from this page or the live menu when you want it.' }
 )
 
 Write-Output "=== haze-catalog-data.js ==="

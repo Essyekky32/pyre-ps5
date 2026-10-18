@@ -51,14 +51,19 @@ That means: kernel offsets, the exploit chain, payload binaries, the 15-second s
 SHA256 checks, the service sequence and the etaHEN loader-repair routing are all
 byte-identical to the bundle we started from.
 
-**Two deliberate exceptions, both in `haze-sequence.js` (2026-10-18), and nothing else in the
+**Four deliberate exceptions, all in `haze-sequence.js` (2026-10-18), and nothing else in the
 frozen set has moved:**
 
 1. A failure in the Payload Manager / App Dumper startup step is now **logged and survived**
-   instead of aborting the whole sequence. kstuff, ShadowMountPlus and etaHEN have already been
-   sent by that point, so the console is jailed either way; aborting only hid the tool menu and
-   made a working jailbreak look broken.
-2. The **original-browser installer is gone** - not shipped and not sent. Upstream's accepts only
+   instead of aborting the whole sequence. kstuff and ShadowMountPlus have already been sent by
+   that point, so the console is jailed either way; aborting only hid the tool menu and made a
+   working jailbreak look broken.
+2. **etaHEN is no longer part of the automatic chain.** The kernel stage pushes the ELF loader
+   (elfldr) and then kstuff and ShadowMountPlus are sent; etaHEN ships as an ordinary entry in
+   the payload list and is launched when it is wanted. The sequence also confirms the loader is
+   answering on 9021 before sending anything, since no payload can be pushed without it.
+3. **Payload spacing is 10 seconds, not 15.**
+4. The **original-browser installer is gone** - not shipped and not sent. Upstream's accepts only
    the 13.42 SDK identifier, so on a 13.60 console it stopped with an "unsupported version"
    notice and did nothing else. `payloads/haze-browser-installer.elf`, its build metadata and
    the `?browser=` option are all removed, and the pages that listed that step as part of

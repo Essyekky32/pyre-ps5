@@ -200,7 +200,7 @@
     {
         "name":  "etaHEN.elf",
         "title":  "etaHEN",
-        "description":  "The homebrew enabler, built for firmware 13.60. Used by the RUN PYRE chain.",
+        "description":  "The homebrew enabler, built for firmware 13.60. Not sent automatically: launch it from this page or the live menu when you want it.",
         "original":  "etaHEN.elf",
         "author":  "",
         "repository":  "",

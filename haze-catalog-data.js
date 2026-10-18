@@ -154,7 +154,7 @@ export const payloads = [
     "file": "payloads/etaHEN.elf",
     "sha256": "aa166a43347d10a31f7efa5ca26ec32f512c65e8910466bfc8033537337b87b2",
     "bytes": 30410624,
-    "description": "The homebrew enabler, built for firmware 13.60. Used by the RUN PYRE chain.",
+    "description": "The homebrew enabler, built for firmware 13.60. Not sent automatically: launch it from this page or the live menu when you want it.",
     "author": "",
     "source": "",
     "loaderOnly": false,

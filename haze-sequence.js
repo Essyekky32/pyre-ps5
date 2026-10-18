@@ -186,24 +186,39 @@ async function sendTransientElf(name, p, chain, log) {
   }
 }
 
-export async function loadOptionalPayloads(p, chain, log, afterEtaHEN) {
+export async function loadOptionalPayloads(p, chain, log, afterChain) {
+  // PYRE: the kernel stage has already mapped and started the ELF loader (elfldr-ps5-1360.elf,
+  // see runKexp), and that loader is the thing listening on port 9021. With no loader there,
+  // no payload can be pushed at all, so confirm it answers before sending anything - and if it
+  // already answers, that is all this step does: nothing is pushed twice.
+  const loaderFd = await connectToElfldr(p, chain).catch(() => -1);
+  if (loaderFd < 0) {
+    throw new Error(
+      "The ELF loader (elfldr) is not answering on port 9021, so no payload can be pushed. " +
+      "Restart the console completely and run RUN PYRE again."
+    );
+  }
+  log("ELF loader (elfldr) is answering on port 9021 - payloads can be pushed.");
+  if (!p.worker_is_usable || p.worker_is_usable()) await chain.syscall(SYS_CLOSE, loaderFd);
+
+  // PYRE: kstuff and ShadowMountPlus are the automatic chain. etaHEN is deliberately NOT sent
+  // here any more: it is a normal entry in the payload list, launched from the payloads page
+  // or the live menu when it is wanted, like every other tool.
   await sendTransientElf("kstuff.elf", p, chain, log);
-  log("kstuff.elf sent; waiting 15 seconds for startup");
-  await new Promise((resolve) => setTimeout(resolve, 15000));
+  log("kstuff.elf sent; waiting 10 seconds for startup");
+  await new Promise((resolve) => setTimeout(resolve, 10000));
   await sendTransientElf("shadowmountplus.elf", p, chain, log);
-  log("shadowmountplus.elf sent; waiting 15 seconds for startup");
-  await new Promise((resolve) => setTimeout(resolve, 15000));
-  await sendTransientElf("etaHEN.elf", p, chain, log);
-  log("etaHEN.elf sent");
-  if (afterEtaHEN) {
-    log("Waiting 15 seconds before Payload Manager and App Dumper startup.");
-    await new Promise((resolve) => setTimeout(resolve, 15000));
+  log("shadowmountplus.elf sent; waiting 10 seconds for startup");
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+  if (afterChain) {
+    log("Waiting 10 seconds before Payload Manager and App Dumper startup.");
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
-      await afterEtaHEN();
+      await afterChain();
     } catch (error) {
-      // PYRE: kstuff, ShadowMountPlus and etaHEN have already been sent by this point, so
-      // the console IS jailbroken. A service that refuses to answer must not fail the whole
-      // startup, because that hides the tool menu and looks like a broken jailbreak.
+      // PYRE: kstuff and ShadowMountPlus have already been sent by this point, so the console
+      // IS jailbroken. A service that refuses to answer must not fail the whole startup,
+      // because that hides the tool menu and looks like a broken jailbreak.
       log("Payload Manager / App Dumper startup reported: " + String(error.message || error));
       log("Continuing anyway - the chain above already ran. Open the menu and launch tools from there.");
     }
@@ -369,5 +384,6 @@ export async function runKexp(krw, p, chain, log) {
   if (result.joinResult !== 0)
     throw new Error("kexp: pthread_join returned " + hex(result.joinResult));
   say("elfldr returned " + hex(result.shellcodeResult));
+  say("ELF loader pushed (elfldr-ps5-1360.elf). It answers on port 9021, which is what every payload after this is sent through.");
   return true;
 }
