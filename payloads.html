@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="stylesheet" href="haze-menu.css?v=services-1"><title>Launch payloads | PYRE</title>
+<style>
+  #payloads-log { font-family: monospace; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 40vh; overflow-y: auto; margin-top: 18px; color: #efdcc9; }
+  #payloads-error { color: #fff; padding: 12px; border: 2px solid #ff6178; border-radius: 4px; overflow-wrap: anywhere; margin-top: 16px; }
+  #payloads-status { color: #f6ece3; padding: 8px; border: 1px solid #5c3620; border-left: 3px solid #ff7a18; border-radius: 4px; background: #150f0c; overflow-wrap: anywhere; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body class="haze-page haze-catalog-page"><main class="haze-catalog">
+<a class="haze-back" href="additional.html">&larr; Payload catalogue</a>
+<p class="haze-eyebrow">PYRE / LAUNCH PAYLOADS</p>
+<h1 class="haze-title">Send a payload</h1>
+<p class="haze-intro">Every card below is a working button. Pressing one downloads that file from this PC, checks it against the catalogue, and pushes it to your console's ELF loader. All of them ship beside <code>Pyre.exe</code>, so there is nothing to download and nothing to upload.</p>
+<div class="haze-notice" role="status">This is <strong>not</strong> RUN PYRE. It starts no exploit: no kernel stage, no kstuff, no ShadowMountPlus, no etaHEN. If the console is not already jailbroken in this session, every button fails fast with a plain explanation and sends nothing.</div>
+<div class="haze-notice" role="status">Open this page the same way you reached PYRE &mdash; normally through the console's User's Guide. Payloads are checksum-verified, and that check is only available on a secure page.</div>
+<div class="haze-actions"><button type="button" class="haze-pill secondary" id="payloads-reload">Reload this page</button><a class="haze-pill secondary" href="index.html">PYRE menu</a><a class="haze-pill secondary" href="additional.html">Payload catalogue</a></div>
+<p id="payloads-error" role="alert" hidden></p>
+<p id="payloads-status" role="status">Latest status: nothing sent yet.</p>
+<div id="haze-live-cards" class="haze-grid"></div>
+<div id="payloads-log"></div>
+<p class="haze-help">Payloads are sent one at a time, straight to the console's loader on port 9021. A transfer is not proof the payload started &mdash; watch the console's notifications. To install the PYRE autoloader, use its own page.</p>
+<p class="haze-foot">Original tools by their respective developers. <a href="payload-sources.json">Versions &amp; sources</a></p>
+</main>
+<script src="./src/firmware.js"></script>
+<script src="./haze-main.js?v=restart-guard-1"></script>
+<script src="./src/rop.js?v=aio-trace-1"></script>
+<script src="./src/utils/syscalls.js"></script>
+<script type="module" src="./payloads.js?v=pyre-payloads-page-1"></script>
+</body></html>
