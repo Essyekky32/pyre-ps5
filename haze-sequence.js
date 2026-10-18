@@ -208,37 +208,11 @@ export async function loadOptionalPayloads(p, chain, log, afterEtaHEN) {
       log("Continuing anyway - the chain above already ran. Open the menu and launch tools from there.");
     }
   }
-  if (new URLSearchParams(window.location.search).get("browser") === "0") {
-    log("Browser installation skipped by URL option.");
-    return;
-  }
-  // PYRE: this installer only accepts the 13.42 SDK firmware identifier (see
-  // browser-installer-build.json in payloads/). On anything else it stops with an
-  // "unsupported version" notice, which only confuses people, so it is not sent unless
-  // the console actually reports the version it was built for - or ?browser=1 forces it.
-  const forceBrowser = new URLSearchParams(window.location.search).get("browser") === "1";
-  const browserInstallerFirmware = "13.42";
-  if (!forceBrowser && String(window.fw_str || "") !== browserInstallerFirmware) {
-    log("Browser installer skipped: it was built for firmware " + browserInstallerFirmware +
-        " and this console reports " + (window.fw_str || "an unknown version") + ".");
-    log("Nothing else is affected. Reach PYRE again through the console's User's Guide. (Add ?browser=1 to send it anyway.)");
-    return;
-  }
-  log("Checking for existing browser files before sending its installer.");
-  if (p.assert_worker_usable) p.assert_worker_usable();
-  const browserFiles = await chain.syscall(SYS_ACCESS, p.stringify("/user/app/MOUU12023"), 0);
-  if ((browserFiles.low | 0) === 0) {
-    log("Browser title MOUU12023 files already exist. Installer download and launch skipped.");
-    return;
-  }
-  log("Waiting 15 seconds before the original-browser installation check. Keep this page open.");
-  await new Promise((resolve) => setTimeout(resolve, 15000));
-  try {
-    await sendTransientElf("haze-browser-installer.elf", p, chain, log);
-    log("Browser installer sent. Watch PS5 notifications for installed, skipped, or stopped status; transfer alone does not confirm installation.");
-  } catch (error) {
-    log("Browser installer could not be sent: " + String(error));
-  }
+  // PYRE: our build targets firmware 13.60 only. Upstream's original-browser installer only
+  // accepts the 13.42 SDK identifier, so on 13.60 it stopped with an "unsupported version"
+  // notice and nothing else happened. It is not shipped or sent at all any more; the way back
+  // into PYRE is the console's User's Guide, which Pyre's own DNS and TLS listeners answer.
+  log("Browser-package installer is not part of this build (it only supported 13.42). Reach PYRE again through the console's User's Guide.");
 }
 
 function patchShellcode(blob, symbols) {

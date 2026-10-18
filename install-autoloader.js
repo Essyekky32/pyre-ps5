@@ -10,7 +10,7 @@
 // It sends EXACTLY ONE file and nothing else:
 //   our-payloads/pyre-autoloader-installer_v0.5.2-pyre.elf
 // No kernel exploit, no kstuff, no shadowmountplus, no etaHEN, no Payload Manager, no App
-// Dumper, no browser installer. The RUN PYRE sequence is not run here at all.
+// Dumper. The RUN PYRE sequence is not run here at all.
 //
 // It cannot conjure a loader: the console's ELF loader only listens on port 9021 once the
 // exploit has been run in this console session. On a cold boot the push fails fast, this

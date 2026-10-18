@@ -58,16 +58,19 @@ frozen set has moved:**
    instead of aborting the whole sequence. kstuff, ShadowMountPlus and etaHEN have already been
    sent by that point, so the console is jailed either way; aborting only hid the tool menu and
    made a working jailbreak look broken.
-2. The browser installer is **not sent unless the console reports the firmware that installer
-   was built for (13.42)**, or `?browser=1` forces it. Upstream's installer accepts only the
-   13.42 SDK identifier, so on 13.60 it stopped with an "unsupported version" notice that only
-   confused people. `?browser=0` still skips it outright.
+2. The **original-browser installer is gone** - not shipped and not sent. Upstream's accepts only
+   the 13.42 SDK identifier, so on a 13.60 console it stopped with an "unsupported version"
+   notice and did nothing else. `payloads/haze-browser-installer.elf`, its build metadata and
+   the `?browser=` option are all removed, and the pages that listed that step as part of
+   startup no longer do. The way back into PYRE is the console's User's Guide, which Pyre's own
+   DNS and TLS listeners answer.
 
 `_FROZEN-MANIFEST.txt` holds the SHA256 of all 84 of those files, taken before any edit. It is a
 record, not a gate: the two logic lines we have amended (`haze-catalog-data.js`,
 `haze-sequence.js`) are kept current, while the payload binaries we swapped on request
-(`etaHEN.elf`, `kstuff.elf`, `shadowmountplus.elf`) and the 16 `optional-*.elf` we removed from
-the site root still carry their original hashes - so a re-check reports those and nothing else.
+(`etaHEN.elf`, `kstuff.elf`, `shadowmountplus.elf`) and the files we removed from the site root
+(16 `optional-*.elf`, plus `haze-browser-installer.elf` and its build metadata) still carry
+their original hashes - so a re-check reports those and nothing else.
 Re-check with:
 
 ```powershell
