@@ -198,10 +198,30 @@ export async function loadOptionalPayloads(p, chain, log, afterEtaHEN) {
   if (afterEtaHEN) {
     log("Waiting 15 seconds before Payload Manager and App Dumper startup.");
     await new Promise((resolve) => setTimeout(resolve, 15000));
-    await afterEtaHEN();
+    try {
+      await afterEtaHEN();
+    } catch (error) {
+      // PYRE: kstuff, ShadowMountPlus and etaHEN have already been sent by this point, so
+      // the console IS jailbroken. A service that refuses to answer must not fail the whole
+      // startup, because that hides the tool menu and looks like a broken jailbreak.
+      log("Payload Manager / App Dumper startup reported: " + String(error.message || error));
+      log("Continuing anyway - the chain above already ran. Open the menu and launch tools from there.");
+    }
   }
   if (new URLSearchParams(window.location.search).get("browser") === "0") {
     log("Browser installation skipped by URL option.");
+    return;
+  }
+  // PYRE: this installer only accepts the 13.42 SDK firmware identifier (see
+  // browser-installer-build.json in payloads/). On anything else it stops with an
+  // "unsupported version" notice, which only confuses people, so it is not sent unless
+  // the console actually reports the version it was built for - or ?browser=1 forces it.
+  const forceBrowser = new URLSearchParams(window.location.search).get("browser") === "1";
+  const browserInstallerFirmware = "13.42";
+  if (!forceBrowser && String(window.fw_str || "") !== browserInstallerFirmware) {
+    log("Browser installer skipped: it was built for firmware " + browserInstallerFirmware +
+        " and this console reports " + (window.fw_str || "an unknown version") + ".");
+    log("Nothing else is affected. Reach PYRE again through the console's User's Guide. (Add ?browser=1 to send it anyway.)");
     return;
   }
   log("Checking for existing browser files before sending its installer.");

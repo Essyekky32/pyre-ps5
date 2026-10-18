@@ -51,7 +51,23 @@ That means: kernel offsets, the exploit chain, payload binaries, the 15-second s
 SHA256 checks, the service sequence and the etaHEN loader-repair routing are all
 byte-identical to the bundle we started from.
 
-`_FROZEN-MANIFEST.txt` holds the SHA256 of all 84 of those files, taken before any edit.
+**Two deliberate exceptions, both in `haze-sequence.js` (2026-10-18), and nothing else in the
+frozen set has moved:**
+
+1. A failure in the Payload Manager / App Dumper startup step is now **logged and survived**
+   instead of aborting the whole sequence. kstuff, ShadowMountPlus and etaHEN have already been
+   sent by that point, so the console is jailed either way; aborting only hid the tool menu and
+   made a working jailbreak look broken.
+2. The browser installer is **not sent unless the console reports the firmware that installer
+   was built for (13.42)**, or `?browser=1` forces it. Upstream's installer accepts only the
+   13.42 SDK identifier, so on 13.60 it stopped with an "unsupported version" notice that only
+   confused people. `?browser=0` still skips it outright.
+
+`_FROZEN-MANIFEST.txt` holds the SHA256 of all 84 of those files, taken before any edit. It is a
+record, not a gate: the two logic lines we have amended (`haze-catalog-data.js`,
+`haze-sequence.js`) are kept current, while the payload binaries we swapped on request
+(`etaHEN.elf`, `kstuff.elf`, `shadowmountplus.elf`) and the 16 `optional-*.elf` we removed from
+the site root still carry their original hashes - so a re-check reports those and nothing else.
 Re-check with:
 
 ```powershell
