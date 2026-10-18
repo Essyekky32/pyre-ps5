@@ -25,6 +25,17 @@ Nobody needs Python. Nobody needs to type an address into a stranger's page.
 
 ## Quick start
 
+> ### Two things will happen on first run. Neither is a problem.
+>
+> **1. "Windows protected your PC" (SmartScreen).** PYRE is not code-signed — a
+> signing certificate costs real money and this is free homebrew. Click **More
+> info → Run anyway.** Antivirus may grumble too; it's a jailbreak tool, that's
+> normal for one.
+>
+> **2. A prompt for the ".NET Desktop Runtime."** Needed once; it offers a
+> download link. Install, then run Pyre again. **That is the only thing to
+> install** — no Python, no Node, no scripts, nothing from a command line.
+
 1. Download the **Release zip** and extract it somewhere permanent.
 2. Run **`Pyre.exe`**. If Windows asks for the **.NET 8 Desktop Runtime**, install
    it and run Pyre again — that's the only dependency.

@@ -3,6 +3,19 @@ PYRE - PS5 jailbreak self-host
 
 You are seeing this because Pyre is hosting the exploit on your PC.
 
+READ THIS FIRST: two things will happen, neither is a problem
+-------------------------------------------------------------
+1. "Windows protected your PC" (SmartScreen)
+   Pyre is not code-signed - a signing certificate costs real money and this is
+   free homebrew. Click "More info", then "Run anyway".
+   Your antivirus may also grumble at it. It is a jailbreak tool; that is normal
+   for one, not a sign of anything nasty.
+
+2. A window asking for the ".NET Desktop Runtime"
+   Pyre needs it once. It offers you a download link - take it, install it, then
+   run Pyre again. That is the ONLY thing to install. There is no Python, no
+   Node, no scripts, nothing from a command line.
+
 START HERE
 ----------
 1. Pyre.exe should be running. Press START HOSTING if it is not.
