@@ -1,0 +1,83 @@
+/* PYRE — PS5 self-host skin.
+   Presentation only. Every selector, id and class name below is preserved from the
+   original skin so the frozen logic files (haze-*.js, src/*, offsets/*, payloads/*)
+   continue to find exactly what they expect. Nothing here changes behaviour. */
+:root{color-scheme:dark;--ember:#ff7a18;--flame:#ffae63;--ash:#c9a893;--bg:#0c0a09;--line:#5c3620;--ink:#f6ece3;--panel:#150f0c;--panel-2:#1d130d}
+*{box-sizing:border-box}
+body.haze-page{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+.haze-page{background-image:radial-gradient(ellipse at 50% 38%,#7a320f3d,transparent 66%),radial-gradient(ellipse at 50% 108%,#ff7a1814,transparent 60%)}
+/* The landing-page rain canvas is drawn in the old palette by haze-home.js.
+   Rather than touch that file, the canvas is recoloured here with a filter. */
+#haze-rain{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:.6;filter:hue-rotate(30deg) saturate(1.35) brightness(1.06)}
+.haze-home{position:relative;z-index:1;max-width:760px;margin:auto;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:52px 28px;text-align:center}
+.haze-eyebrow{font:12px monospace;letter-spacing:.28em;color:var(--flame);margin:0 0 22px}
+.haze-title{font:600 clamp(70px,11vw,136px)/1 monospace;letter-spacing:.22em;padding-left:.22em;margin:0;color:var(--ember);text-shadow:0 0 22px #ff7a1866,0 0 70px #ff4d0030}
+.haze-tagline{color:#e6cbb4;font-size:16px;letter-spacing:.13em;margin:20px 0 40px}
+.haze-choices{display:grid;gap:18px;max-width:570px;width:100%;margin:0 auto}
+.haze-choice{display:flex;align-items:center;gap:24px;text-align:left;min-height:102px;padding:23px 27px;color:var(--ink);background:#150f0cdd;border:1px solid var(--line);border-left:3px solid #a04a12;border-radius:8px;text-decoration:none;box-shadow:0 0 22px #ff7a180f;transition:border-color .15s,background .15s,box-shadow .15s}
+.haze-choice strong{display:block;letter-spacing:.13em;font-size:20px;font-weight:600}
+.haze-choice small{display:block;color:var(--ash);font-size:13px;margin-top:10px}
+.haze-number{font:12px monospace;color:var(--ember)}
+.haze-arrow{margin-left:auto;color:var(--ember);font-size:25px}
+a:focus,button:focus{outline:2px solid #fff;outline-offset:4px}
+.haze-choice:hover,.haze-choice:focus{background:#291508;border-color:var(--ember);border-left-color:var(--ember);box-shadow:0 0 26px #ff7a1836}
+.haze-help{font-size:13px;line-height:1.6;color:var(--ash);margin-top:28px}
+.haze-foot{font:11px/1.8 monospace;letter-spacing:.07em;color:#a4846d;margin:26px 0 0}
+.haze-foot span{padding:0 12px}
+.haze-foot a,.haze-back{color:var(--flame)}
+.haze-catalog{max-width:1120px;margin:auto;padding:35px 28px 50px}
+.haze-back{display:inline-block;margin-bottom:35px;text-decoration:none;font-size:14px}
+.haze-catalog .haze-eyebrow{margin-bottom:14px}
+.haze-catalog h1{font-size:40px;letter-spacing:-.035em;margin:0 0 13px}
+.haze-intro{color:var(--ash);line-height:1.6}
+.haze-notice{margin:24px 0 20px;border:1px solid var(--line);border-left:3px solid var(--ember);border-radius:5px;background:#1b110b;padding:16px 18px;line-height:1.6;font-size:14px}
+.haze-notice.error{border-color:#ff7b72;color:#ffb4ad}
+.haze-actions{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+.haze-pill,.haze-launch{display:inline-block;border:1px solid var(--ember);border-radius:5px;background:var(--ember);color:#1a0a02;font:600 14px Arial,sans-serif;padding:13px 17px;text-decoration:none;cursor:pointer}
+.haze-pill.secondary{background:#1a1009;color:#ffcda1;border-color:var(--line)}
+.haze-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:28px 0}
+.haze-card{display:flex;flex-direction:column;align-items:flex-start;border:1px solid #452915;border-radius:8px;background:#130d09;padding:24px;min-height:220px}
+.haze-card h2{font-size:20px;margin:14px 0 12px}
+.haze-card p{font-size:14px;line-height:1.6;color:var(--ash);margin:0 0 20px}
+.haze-version{font:11px monospace;letter-spacing:.09em;color:var(--flame)}
+.haze-card-footer{display:flex;align-items:center;gap:15px;margin-top:auto;flex-wrap:wrap}
+.haze-card-footer a{font-size:12px;color:var(--ash)}
+button:disabled{cursor:default;opacity:.5}
+.haze-quiet{font-size:12px;color:var(--ash)}
+#haze-runtime{margin-top:30px}
+#haze-runtime .haze-catalog{padding:20px 0}
+.haze-runtime-only{display:none}
+.haze-session-screen{background:#0c0a09!important;color:var(--ink)!important;margin:0!important}
+.haze-session-screen #haze-runtime{margin:0}
+.haze-session-screen #haze-runtime .haze-catalog{padding:35px 28px}
+.haze-session-screen #haze-runtime .haze-home{min-height:92vh}
+.haze-session-screen .haze-runtime-only{display:block}
+@media(max-width:650px){.haze-home{padding:35px 22px}.haze-title{font-size:70px}.haze-choice{padding:21px 18px;gap:16px}.haze-choice strong{font-size:15px}.haze-choice small{font-size:12px}.haze-grid{grid-template-columns:1fr}.haze-catalog h1{font-size:32px}.haze-catalog{padding:24px 20px}.haze-foot{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+[hidden]{display:none!important}
+/* Console readability: explicit system-font properties for the catalog and live controls.
+   Kept from the original skin — this is what stopped the reported blank-label behaviour. */
+.haze-catalog-page,.haze-catalog,#haze-runtime{font-family:monospace;font-size:16px;font-weight:400;font-style:normal;line-height:1.5;-webkit-text-size-adjust:100%;color:var(--ink)}
+.haze-catalog h1{font-family:monospace;font-size:26px;font-weight:400;line-height:1.5;letter-spacing:0;color:var(--ink)}
+.haze-catalog h2{font-family:monospace;font-size:20px;font-weight:400;line-height:1.5;color:var(--ink)}
+.haze-catalog p,.haze-catalog a,.haze-catalog .haze-notice,.haze-card p,.haze-card-footer a,.haze-back,.haze-availability,.haze-session-progress{font-family:monospace;font-size:16px;font-weight:400;font-style:normal;line-height:1.5;color:#e8d3c1}
+.haze-pill,.haze-launch{font-family:monospace;font-size:18px;font-weight:400;font-style:normal;line-height:1.5;-webkit-appearance:none;appearance:none;min-height:54px;min-width:220px;white-space:normal;color:#1a0a02;background:var(--ember);border-color:#ffa04d}
+.haze-pill.secondary{color:#ffd9b3;background:#26150b}
+.haze-launch{width:100%;text-align:left}
+.haze-card-footer{width:100%}
+.haze-availability{display:block;color:#d8b593}
+.haze-card-live{cursor:pointer}
+.haze-card-live:hover{border-color:var(--ember)}
+.haze-session-progress{padding:14px 0;margin:0;color:var(--ink)}
+button:disabled{opacity:1;color:#c9a78d;background:#2c1a0f;border-color:#6b3f22}
+/* Bundled menu font, served locally. Same file as the original skin ships. */
+@font-face{font-family:PyreUI;src:url('HazeUI-Regular.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+.haze-catalog-page,.haze-catalog-page *:not(script),#haze-runtime,#haze-runtime *{font-family:PyreUI,Arial,sans-serif!important;font-weight:400!important}
+.haze-catalog-page,.haze-session-screen{color:var(--ink);background:#0c0a09}
+.haze-catalog-page p,#haze-runtime p{color:#ecd9c8}
+.haze-card-footer .haze-open-service{display:block;width:100%;font-size:18px;color:#1a0a02;padding:12px;border:1px solid #ffa04d;border-radius:5px;background:var(--ember);text-decoration:none}
+.haze-card-footer .haze-open-service:hover,.haze-card-footer .haze-open-service:focus{background:#ff9440}
+.haze-card-footer{align-items:stretch}
+.haze-card{min-height:280px}
+.haze-card p{min-height:3em}
+#haze-runtime .haze-choices button{width:100%;font-size:18px}

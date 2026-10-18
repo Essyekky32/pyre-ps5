@@ -1,0 +1,18 @@
+{
+  "status": "Restored exact payloads from before the release update after reported console freezes",
+  "restored_from_commit": "eb5e59086661a3f01f257f38d97ad56768dcbfe9",
+  "payloads": [
+    {
+      "file": "kstuff.elf",
+      "source": "https://raw.githubusercontent.com/haze7714/Relapse-Exploit/eb5e59086661a3f01f257f38d97ad56768dcbfe9/payloads/kstuff.elf",
+      "sha256": "858880a8adbedaabfaced025384f4f6f908cfe44f1a049070ad8df911c22b972",
+      "bytes": 1737080
+    },
+    {
+      "file": "shadowmountplus.elf",
+      "source": "https://raw.githubusercontent.com/haze7714/Relapse-Exploit/eb5e59086661a3f01f257f38d97ad56768dcbfe9/payloads/shadowmountplus.elf",
+      "sha256": "0b30a1c23b83ebb2aa6523c8caaa5801ee89bde00e90cb36f392a29bb0bdb403",
+      "bytes": 2449672
+    }
+  ]
+}

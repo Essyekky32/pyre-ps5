@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open PYRE on your PS5</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #e9eef7; background: #0b1019; font: 18px/1.6 Arial, sans-serif; }
+    main { max-width: 850px; margin: 0 auto; padding: 56px 24px; }
+    .tag { color: #80c9ff; font-size: 14px; letter-spacing: .15em; text-transform: uppercase; }
+    h1 { margin: 10px 0 14px; font-size: 42px; line-height: 1.15; }
+    h2 { font-size: 23px; margin: 0 0 12px; }
+    p { margin: 0 0 18px; }
+    .card { background: #151e2d; border: 1px solid #2b3b52; border-radius: 15px; padding: 24px; margin: 20px 0; }
+    ol { padding-left: 25px; }
+    li { margin: 0 0 17px; padding-left: 5px; }
+    strong { color: #fff; }
+    .field { display: flex; align-items: center; gap: 12px; margin: 12px 0 6px; flex-wrap: wrap; }
+    input { flex: 1; min-width: 200px; padding: 13px; border-radius: 8px; border: 1px solid #375373; background: #08111e; color: #fff; font: 16px/1.4 monospace; }
+    button, .action { display: inline-block; padding: 11px 17px; color: #08111e; background: #86cfff; border: 0; border-radius: 8px; font: bold 16px/1.4 Arial, sans-serif; cursor: pointer; text-decoration: none; }
+    button:focus, input:focus, a:focus { outline: 3px solid #fff; outline-offset: 3px; }
+    a { color: #93d5ff; }
+    small { font-size: 14px; color: #afc0d6; }
+    .status { min-height: 1.6em; color: #a7ecc6; font-size: 14px; }
+    @media (max-width: 550px) { main { padding: 32px 18px; } h1 { font-size: 32px; } .card { padding: 19px; } }
+  </style>
+</head>
+<body>
+<main>
+  <div class="tag">PYRE &middot; PYRE PS5 host</div>
+  <h1>Open PYRE on your PS5</h1>
+  <p>You can reach the hosted page through the PS5's User's Guide browser. A separate browser package is not needed for this first visit.</p>
+
+  <section class="card" aria-labelledby="steps-title">
+    <h2 id="steps-title">First visit through the User's Guide</h2>
+    <ol>
+      <li>On the PS5, open <strong>Settings &gt; Network &gt; Settings &gt; Set Up Internet Connection</strong>.</li>
+      <li>Select your connected network, press <strong>Options</strong>, and open <strong>Advanced Settings</strong>.</li>
+      <li>Set <strong>DNS Settings</strong> to <strong>Manual</strong>. Use the community DNS recommended by the Relapse project's own instructions as your <strong>Primary DNS</strong>:
+        <div class="field"><input id="dns" aria-label="Community primary DNS address" value="45.56.67.85" readonly><button type="button" onclick="copyField('dns')">Copy DNS</button></div>
+        <small>Keep a note of your previous DNS settings so you can restore them. This is a community service, rather than a DNS server operated by PYRE.</small>
+      </li>
+      <li>Open <strong>Settings &gt; User's Guide, Health &amp; Safety, and Other Information &gt; User's Guide</strong>. The menu may appear as <strong>Guide &amp; Tips, Health &amp; Safety, and Other Information</strong>.</li>
+      <li>On the <strong>PS5 Jailbreak Redirect</strong> page labeled <strong>etawen.dev</strong>, enter the complete PYRE address in the URL box and choose <strong>Go</strong>. Open PYRE directly before selecting an exploit on another page:
+        <div class="field"><input id="site" aria-label="PYRE PS5 site address" value="" readonly><button type="button" onclick="copyField('site')">Copy URL</button></div>
+      </li>
+    </ol>
+    <div id="copy-status" class="status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="card" aria-labelledby="browser-title">
+    <h2 id="browser-title">Already have a browser open?</h2>
+    <p id="host-link-note" hidden>Enter the same PYRE address in its address bar, or use this link:</p>
+    <a class="action" id="host-link" href="#" hidden>Open PYRE PS5 host</a>
+  </section>
+
+  <p>The website and its hosted payloads are served by the PYRE tool running on your own PC, not from any public site. The community DNS is only an entry point to the browser. That entry service needs to be available for this method to work.</p>
+  <p>After the Internet Browser package is installed, use its home-screen icon for later visits. The owner confirmed that the browser remains available after a restart. It does not need to be installed each time; the exploit still needs to run after a full restart.</p>
+  <p><small>DNS address verified against the <a href="https://github.com/ntfargo/Relapse-Exploit#usage">official Relapse Usage instructions</a>. The redirect page was tested in a desktop browser and opened the PYRE URL; first-visit access still needs confirmation on the PS5.</small></p>
+</main>
+<script>
+// The address to enter is this tool's own address - the PC hosting PYRE. It is
+// derived from how this page was reached, so it is always the user's own host
+// and never a public site.
+function pyreAddress() {
+  if (location.protocol === 'http:' || location.protocol === 'https:') {
+    return location.origin + '/';
+  }
+  return '';
+}
+var pyreUrl = pyreAddress();
+var pyreSite = document.getElementById('site');
+var pyreLink = document.getElementById('host-link');
+var pyreLinkNote = document.getElementById('host-link-note');
+var pyreStatus = document.getElementById('copy-status');
+if (pyreUrl) {
+  pyreSite.value = pyreUrl;
+  pyreLink.href = pyreUrl;
+  pyreLink.hidden = false;
+  pyreLinkNote.hidden = false;
+} else {
+  pyreStatus.textContent = 'Open the Pyre tool on your PC - it shows this exact address.';
+}
+function copyField(id) {
+  var field = document.getElementById(id);
+  var status = document.getElementById('copy-status');
+  field.focus();
+  field.select();
+  field.setSelectionRange(0, field.value.length);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(field.value).then(function () {
+      status.textContent = 'Copied.';
+    }, function () {
+      status.textContent = 'Text selected. Use your browser\'s Copy command.';
+    });
+  } else {
+    var copied = false;
+    try { copied = document.execCommand('copy'); } catch (error) {}
+    status.textContent = copied ? 'Copied.' : 'Text selected. Use your browser\'s Copy command.';
+  }
+}
+</script>
+</body>
+</html>

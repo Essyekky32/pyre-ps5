@@ -1,0 +1,16 @@
+etaHEN private-loader readiness repair (tested in one PS5 13.42 session)
+
+Original SHA256: 26034dfbb88dd8be344fee1876c387bfcba0386edb079014e18ec25580368f6d
+Patched SHA256: d26c21ccd96efd8a07de756c076a6c0aedb10d5c5538ed8c6966bad1806915ed
+
+The exact bundled payload private loader classifies the first four bytes as onio before handling a ping, while its complete ping command and callers use hen:ping. The discriminator rejects the renamed command. Both embedded copies have the same defect.
+
+Repair: replace the four-byte comparison operand in each embedded private-loader copy with hen:. Only eight bytes differ in the decompressed bootstrapper. Recompress it into the original allocated outer ELF section; preserve all outer ELF headers, offsets, sizes, and uncompressed length.
+
+Test URL: https://haze7714.github.io/Relapse-Exploit/loader-fix.html
+Main URL: https://haze7714.github.io/Relapse-Exploit/
+Both entry pages select etaHEN-loader-fix.elf. The original etaHEN.elf is retained. The binary repair does not alter the kernel exploit, Kstuff, or ShadowMountPlus. Website pauses are now 5 seconds between payloads; successful console validation used 15-second pauses. The 5-second timing still needs a fresh-session console test.
+
+Validation: original and patched bootstrapper diff, all outer headers unchanged, decompression equals intended eight-byte patch, duplicated server operands consistent with hen:ping. Console validation: successful startup on firmware 13.42, Toolbox online, loader PID and util/daemon readiness markers present, no loader-recovery errors during a 3 minute 40 second log observation. This is one console session; kernel-stage instability and other payload functions are not resolved or validated by this repair.
+
+Matching source parser behavior: https://github.com/aydencharles/onionHEN/blob/b23ffe674b2de9f62fe634944c9230ff149d593a/source/onion_elfldr_server/source/main.c

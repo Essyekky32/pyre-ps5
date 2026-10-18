@@ -1,0 +1,57 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.1.1",
+  "type": "module",
+  "browserslist": [
+    "safari >= 11",
+    "chrome >= 80"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "mock": "node mock-server.js",
+    "dev:mock": "concurrently \"npm run mock\" \"npm run dev\"",
+    "build": "vite build",
+    "test": "node --test tests/*.test.mjs",
+    "lint": "eslint . --max-warnings=0",
+    "preview": "vite preview",
+    "extract": "i18next",
+    "prebuild": "npm run lint && npm test",
+    "test:browser": "node ../tests/run_autoload_editor_browser_tests.mjs && node ../tests/run_autoload_editor_browser_tests.mjs --lifecycle && node ../tests/run_markdown_locale_browser_tests.mjs && node ../tests/run_markdown_locale_browser_tests.mjs --repository-icons",
+    "postbuild": "node ../tools/check_frontend_bundle.mjs"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "dompurify": "^3.4.13",
+    "i18next": "^26.3.6",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "lucide-react": "^1.8.0",
+    "marked": "^18.0.9",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-i18next": "^17.0.10",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.5.0",
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.6",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "express": "^5.2.1",
+    "globals": "^17.4.0",
+    "i18next-parser": "^9.0.2",
+    "postcss": "^8.5.13",
+    "tailwindcss": "^3.4.19",
+    "terser": "^5.46.1",
+    "vite": "^8.0.4",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}

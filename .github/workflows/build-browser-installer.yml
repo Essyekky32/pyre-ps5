@@ -1,0 +1,130 @@
+name: Build browser installer
+
+on:
+  push:
+    branches: [ps5-autoload]
+    paths:
+      - 'browser-installer/**'
+      - 'browser-installer-source.zip'
+      - '.github/workflows/build-browser-installer.yml'
+  workflow_dispatch:
+    inputs:
+      package_url:
+        description: Direct HTTPS URL for the package pinned in configure.py
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-installer-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      LLVM_CONFIG: /usr/bin/llvm-config-18
+      BROWSER_PACKAGE_URL: https://github.com/haze7714/Relapse-Exploit/releases/download/browser-original-1/InternetBrowser-PS5M.pkg
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Unpack reviewed installer source
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -q browser-installer-source.zip
+          test -f browser-installer/src/installer.c
+          sha256sum browser-installer-source.zip
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang-18 lld-18 llvm-18-dev make pkg-config unzip curl ca-certificates file python3
+
+      - name: Install pinned SDK and curl libraries
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
+            https://github.com/ps5-payload-dev/sdk/releases/download/v0.43/ps5-payload-sdk.zip \
+            --output sdk.zip
+          curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
+            https://github.com/ps5-payload-dev/pacbrew-repo/releases/download/v0.39/ps5-payload-dev.tar.gz \
+            --output pacbrew.tar.gz
+          printf '%s  %s\n' \
+            a9cc9929f21b2b2c5d5b309f3bab4997067c45281c0622cf4838b1aecba66fcb sdk.zip \
+            14ac4113523ed61bc1d42a0d0b7b8981b2bc6aac35a68949c169b0ed0aaf5cdb pacbrew.tar.gz \
+            | sha256sum --check --strict
+          unzip -q sdk.zip
+          mkdir -p pacbrew
+          tar -xzf pacbrew.tar.gz -C pacbrew opt/ps5-payload-sdk/target/user/homebrew
+          cp -a pacbrew/opt/ps5-payload-sdk/target/user/homebrew/. ps5-payload-sdk/target/user/homebrew/
+          chmod +x ps5-payload-sdk/bin/*
+          test -f ps5-payload-sdk/target/user/homebrew/lib/libcurl.a
+          test -f ps5-payload-sdk/target/user/homebrew/lib/libssl.a
+          test -f ps5-payload-sdk/target/user/homebrew/lib/libcrypto.a
+          echo "PS5_PAYLOAD_SDK=$RUNNER_TEMP/ps5-payload-sdk" >> "$GITHUB_ENV"
+
+      - name: Configure pinned package and trusted TLS roots
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$BROWSER_PACKAGE_URL" || { echo 'Set BROWSER_PACKAGE_URL repository variable or provide package_url input'; exit 1; }
+          python3 browser-installer/configure.py --url "$BROWSER_PACKAGE_URL" --ca-bundle /etc/ssl/certs/ca-certificates.crt
+
+      - name: Build installer
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$PS5_PAYLOAD_SDK/bin/prospero-pkg-config" --modversion libcurl
+          "$PS5_PAYLOAD_SDK/bin/prospero-pkg-config" --libs libcurl
+          make -C browser-installer -j2 all
+
+      - name: Inspect ELF and record build
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build-artifacts
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          payloads = [Path('browser-installer/build/haze-browser-installer.elf')]
+          payloads = [payload for payload in payloads if payload.is_file()]
+          if not payloads:
+              raise SystemExit('No installer ELF was built')
+          for payload in payloads:
+              header = payload.read_bytes()[:64]
+              if len(header) < 64 or header[:6] != b'\x7fELF\x02\x01':
+                  raise SystemExit(f'{payload}: expected a 64-bit little-endian ELF')
+              elf_type, machine = struct.unpack_from('<HH', header, 16)
+              if machine != 62 or elf_type not in (2, 3):
+                  raise SystemExit(f'{payload}: expected x86-64 executable/shared ELF')
+          PY
+          for payload in browser-installer/build/haze-browser-installer.elf; do
+            file "$payload"
+            llvm-readelf-18 --file-header --program-headers --dynamic "$payload"
+            cp "$payload" build-artifacts/
+          done > build-artifacts/elf-inspection.txt
+          git rev-parse HEAD > build-artifacts/source-commit.txt
+          printf '%s\n' \
+            'SDK v0.43 sha256:a9cc9929f21b2b2c5d5b309f3bab4997067c45281c0622cf4838b1aecba66fcb' \
+            'PacBrew v0.39 sha256:14ac4113523ed61bc1d42a0d0b7b8981b2bc6aac35a68949c169b0ed0aaf5cdb' \
+            > build-artifacts/dependencies.txt
+          llvm-config-18 --version > build-artifacts/compiler-version.txt
+          cp browser-installer/build/config-manifest.json build-artifacts/config-manifest.json
+          python3 -c 'import json; from pathlib import Path; p = Path("build-artifacts/config-manifest.json"); data = json.loads(p.read_text()); data["compiled"] = True; data["consoleTested"] = False; p.write_text(json.dumps(data, indent=2) + "\n")'
+          (cd build-artifacts && sha256sum *.elf > SHA256SUMS)
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: browser-installer-${{ github.run_id }}
+          path: build-artifacts/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>PYRE PS5 - etaHEN Loader Repair Test</title>
+  <style>
+    html, body { background: #060606; color: #fff; font-family: sans-serif; }
+    body { margin: 24px; }
+    h1 { font-size: 26px; }
+    p { color: #bfc8d8; }
+    #console { font-family: monospace; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>etaHEN Loader Repair Test</h1>
+  <p>Kstuff &rarr; ShadowMountPlus &rarr; etaHEN &rarr; original browser installation check. Keep this page open during startup.</p>
+  <p>Use after a fresh restart. Loader repair verified in a session on firmware 13.42; also enabled on the main autoloader page.</p>
+  <p>AIO diagnostics 1: reports cleanup progress and stops further native calls after a worker timeout. The kernel stall is still under investigation.</p>
+  <p>The original browser is installed only if missing. Watch PS5 notifications for the result. First console test of automatic installation is pending.</p>
+  <div id="console"></div>
+  <script src="./src/firmware.js"></script>
+  <script src="./src/main.js?v=aio-trace-1"></script>
+  <script src="./src/rop.js?v=aio-trace-1"></script>
+  <script src="./src/utils/syscalls.js"></script>
+  <script>
+    // The upstream kernel-success path calls watchR2 only once elfldr is ready.
+    // Preserve a manual R2 mode and a loader-only recovery mode.
+    (function () {
+      var originalWatchR2 = window.watchR2;
+      var started = false;
+      window.watchR2 = function (loadPayloads) {
+        var options = new URLSearchParams(window.location.search);
+        if (options.get('loader') === '1') {
+          window.writeLog('Loader-only mode: send payloads manually on port 9021.', 'info');
+          return;
+        }
+        if (options.get('manual') === '1') {
+          originalWatchR2(loadPayloads);
+          return;
+        }
+        if (started) return;
+        started = true;
+        window.writeLog('Payload autoload starts in 5 seconds. Allow 15 seconds between payloads.', 'info');
+        setTimeout(function () {
+          Promise.resolve().then(loadPayloads).catch(function (error) {
+            window.writeLog('Autoload stopped: ' + String(error), 'error');
+          });
+        }, 5000);
+      };
+    }());
+  </script>
+  <script>
+    // This separate test page selects the repaired etaHEN binary only.
+    // Keeping the routing here also works with cached upstream modules.
+    (function () {
+      var originalFetch = window.fetch;
+      window.fetch = function (input, init) {
+        if (input === 'payloads/etaHEN.elf') {
+          return originalFetch.call(window, 'payloads/etaHEN-loader-fix.elf', init);
+        }
+        return originalFetch.call(window, input, init);
+      };
+    }());
+  </script>
+  <script type="module" src="./src/site.js"></script>
+</body>
+</html>

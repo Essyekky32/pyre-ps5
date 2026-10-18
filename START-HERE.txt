@@ -1,0 +1,41 @@
+PYRE - PS5 jailbreak self-host
+=============================
+
+You are seeing this because Pyre is hosting the exploit on your PC.
+
+START HERE
+----------
+1. Pyre.exe should be running. Press START HOSTING if it is not.
+2. On the HOST tab, note the address it shows (the PC's address on your network).
+   Underneath it, DNS and HTTPS should both say they are live.
+3. On the PS5 (same network):
+     Settings > Network > Settings > Set Up Internet Connection > your network >
+     Options (the ... button) > Advanced Settings > DNS Settings > Manual
+        Primary DNS:     the address from step 2
+        Secondary DNS:   0.0.0.0
+   Do not put a real DNS server in the Secondary box.
+4. You have already done the last part: opening the User's Guide. If it warned
+   about a certificate, that is normal - it is Pyre's own certificate.
+5. Press RUN PYRE below and keep this page open.
+
+If the console freezes or panics, that is the exploit losing its race. Reboot
+fully, then try again. Do not retry without rebooting.
+
+READ NEXT
+---------
+README-PYRE.md          what we changed, what is frozen, the caveats
+_FROZEN-MANIFEST.txt    SHA256 of all 84 untouched logic files
+README.md               upstream docs (untouched)
+
+FOLDERS
+-------
+src/            exploit chain + ROP               FROZEN
+offsets/        per-firmware offset tables        FROZEN
+payloads/       the jailbreak chain Pyre sends    FROZEN
+our-payloads/   extra payloads (PYRE Autoloader, PYRE Payloads)
+
+NOTE
+----
+While your console's DNS points at this PC, Pyre has to be running or the
+console cannot resolve anything at all. Finished with Pyre? Put the console's
+DNS back to Automatic.

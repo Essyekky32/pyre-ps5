@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <title>PYRE by Essy (built [[BUILD_TIME_PLACEHOLDER]])</title>
+</head>
+
+<body>
+  <iframe id="exploit" title="exploit"></iframe>
+
+
+  <main id="loader">
+    <div id="logWrapper">
+      <div id="logContainer"></div>
+    </div>
+
+    <div id="progressContainer">
+      <div id="progressBar"></div>
+      <div id="progressLabel">Loading...</div>
+    </div>
+
+    <!-- PYRE start delay. Timing only: it changes when the exploit iframe is
+         armed, nothing else. 0 restores upstream behaviour (arm immediately).
+         The value is kept in localStorage, so it survives reboots and only
+         resets if you clear WebKit data. -->
+    <div id="delayRow">
+      <label for="delayInput">Start delay</label>
+      <input id="delayInput" type="number" min="0" max="300" step="1" inputmode="numeric" />
+      <span class="delayUnit">seconds</span>
+      <span id="armCountdown"></span>
+      <button id="delayNow" type="button">Arm now</button>
+    </div>
+  </main>
+
+  <footer id="footer">PYRE by Essy (built [[BUILD_TIME_PLACEHOLDER]])<br />Based on the free and open source WebKit Autoloader (GPL-3.0) by PLK: github.com/itsPLK/ps5-webkit-autoloader</footer>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

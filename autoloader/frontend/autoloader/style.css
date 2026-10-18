@@ -1,0 +1,244 @@
+/* PYRE Autoloader - presentation layer only.
+ *
+ * Palette taken from the PYRE desktop app (charcoal + ember + warm cream),
+ * so the autoloader page and the XMB icon read as the same product:
+ *
+ *   charcoal   #0c0a09  #150f0c  #1a1009
+ *   browns     #2a1608  #3a1d0a  #5c3620
+ *   ember      #ff7a18  #ffae63
+ *   cream      #ecd9c8  #f6ece3  #c9a893
+ *
+ * Nothing here affects behaviour. Every selector the original used is still
+ * present with the same name, so app.js finds exactly what it always did.
+ */
+
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: #0c0a09;
+  background: -webkit-linear-gradient(180deg, #0c0a09 0%, #150f0c 100%);
+  color: #ecd9c8;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+#footer {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: #5c3620;
+  line-height: 1.5;
+  text-align: center;
+  z-index: 20;
+}
+
+
+
+/* Loader UI: centered */
+#loader {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  background: #0c0a09;
+  background: -webkit-linear-gradient(180deg, #0c0a09 0%, #150f0c 100%);
+}
+
+/* The iframe's document runs the exploit and reports back to app.js. */
+#exploit {
+  display: none;
+}
+
+#logWrapper {
+  width: 82%;
+  height: 72%;
+  max-width: 1220px;
+  background: #050302;
+  border: 1px solid #3a1d0a;
+  border-radius: 10px;
+  overflow-y: auto;
+  font-family: "SFMono-Regular", Menlo, Monaco, "Cascadia Mono", monospace;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  padding: 1rem 1.25rem;
+}
+
+#logContainer {
+  color: #c9a893;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+#logContainer .line {
+  white-space: pre-wrap;
+  margin-bottom: 0.25rem;
+}
+
+#logContainer .info {
+  color: #c9a893;
+}
+
+#logContainer .success {
+  color: #ffae63;
+}
+
+#logContainer .warning {
+  color: #ffcda1;
+}
+
+#logContainer .error {
+  color: #ffb4ad;
+  font-weight: 600;
+}
+
+#progressContainer {
+  position: relative;
+  width: 82%;
+  max-width: 1220px;
+  height: 3rem;
+  margin-top: 1.75rem;
+  background: #1a1009;
+  border: 1px solid #3a1d0a;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#progressBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: #ff7a18;
+  background: -webkit-linear-gradient(90deg, #ff7a18 0%, #ffae63 100%);
+  -webkit-transition: width 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out;
+}
+
+#progressLabel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #f6ece3;
+  font-size: 1rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Start-delay control (PYRE). Sits under the progress bar and is purely a
+   number: app.js reads it to decide how long to hold before arming. */
+#delayRow {
+  width: 82%;
+  max-width: 1220px;
+  margin-top: 0.9rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #c9a893;
+}
+
+#delayRow label {
+  margin-right: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+#delayInput {
+  width: 5.5rem;
+  padding: 0.35rem 0.5rem;
+  background: #1a1009;
+  border: 1px solid #3a1d0a;
+  border-radius: 6px;
+  color: #f6ece3;
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+#delayInput:focus {
+  outline: none;
+  border-color: #ff7a18;
+}
+
+.delayUnit {
+  margin-left: 0.4rem;
+  color: #5c3620;
+}
+
+#armCountdown {
+  margin-left: 0.9rem;
+  min-width: 3.5rem;
+  color: #ffae63;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+#delayNow {
+  margin-left: 0.9rem;
+  padding: 0.35rem 0.9rem;
+  background: #2a1608;
+  border: 1px solid #ff7a18;
+  border-radius: 6px;
+  color: #ffae63;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#delayNow:hover {
+  background: #3a1d0a;
+  color: #f6ece3;
+}
+
+#delayNow:disabled {
+  border-color: #3a1d0a;
+  color: #5c3620;
+  background: #150f0c;
+  cursor: default;
+}

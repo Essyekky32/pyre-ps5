@@ -1,0 +1,12 @@
+{
+  "packageUrl": "https://github.com/haze7714/Relapse-Exploit/releases/download/browser-original-1/InternetBrowser-PS5M.pkg",
+  "packageSize": 37633547,
+  "packageSha256": "90d29db230458acfd2e3332dc338afe6e63f3d0c0948517918286497c9ac17ca",
+  "titleId": "MOUU12023",
+  "contentId": "IV9999-MOUU12023_00-XXXXXXXXXXXXXXXX",
+  "displayName": "Internet Browser",
+  "caBundleSha256": "ecd9dc38bc3efb7dbd6431f57e29d2f8d6a0f0d211e1464b3fef2cbfe266fcd2",
+  "firmware": "13.42",
+  "compiled": true,
+  "consoleTested": false
+}

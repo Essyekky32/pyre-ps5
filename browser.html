@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PYRE Browser</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #080e18; color: #eaf0fa; font: 20px/1.5 Arial, sans-serif; }
+    main { max-width: 1100px; margin: 0 auto; padding: 45px 38px; }
+    .brand { color: #85cfff; font-size: 14px; text-transform: uppercase; letter-spacing: .15em; }
+    h1 { font-size: 42px; line-height: 1.1; margin: 9px 0 12px; }
+    h2 { margin: 0; font-size: 25px; }
+    p { margin: 0 0 20px; }
+    .intro, .hint { color: #aebfd4; }
+    .panel { background: #131e30; border: 1px solid #293e59; border-radius: 13px; padding: 25px; margin: 24px 0; }
+    .row, .heading-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .heading-row { justify-content: space-between; margin-bottom: 20px; }
+    label { display: block; font-size: 17px; margin-bottom: 7px; }
+    input { width: 100%; padding: 14px 15px; border: 1px solid #365577; border-radius: 8px; background: #080f1c; color: #fff; font: 19px Arial, sans-serif; }
+    .address { flex: 1; min-width: 300px; }
+    button, .button { display: inline-block; border: 1px solid #55799e; border-radius: 8px; padding: 12px 18px; background: #1d3450; color: #fff; font: bold 17px/1.4 Arial, sans-serif; cursor: pointer; text-decoration: none; }
+    .primary { background: #86ceff; color: #071321; border-color: #86ceff; }
+    button:hover, .button:hover { background: #355a80; color: #fff; }
+    .primary:hover { background: #b2e1ff; color: #071321; }
+    a, button, input { -webkit-tap-highlight-color: transparent; }
+    a:focus, button:focus, input:focus { outline: 3px solid #9ddcff; outline-offset: 4px; }
+    .favorite { display: flex; align-items: center; gap: 12px; margin: 13px 0; flex-wrap: wrap; }
+    .favorite-link { flex: 1; min-width: 280px; padding: 21px 23px; color: #fff; text-decoration: none; border-radius: 10px; border: 1px solid #446d99; background: #1a2c45; }
+    .favorite-link:hover { background: #254263; }
+    .favorite-name { display: block; font-size: 24px; font-weight: bold; }
+    .favorite-url { display: block; color: #a9c8e9; font-size: 15px; overflow-wrap: break-word; }
+    .small-button { font-size: 14px; padding: 10px 13px; }
+    .hint, .status, footer { font-size: 16px; }
+    .status { min-height: 24px; color: #b1e7ca; margin-top: 14px; }
+    .error { color: #ffc0b8; }
+    #favorite-editor { margin-top: 20px; border-top: 1px solid #304866; padding-top: 20px; }
+    .form-field { margin-bottom: 16px; }
+    [hidden] { display: none !important; }
+    footer { color: #9fadc0; margin: 28px 0 0; }
+    footer a { color: #99d3fc; }
+    @media (max-width: 600px) { main { padding: 27px 19px; } h1 { font-size: 34px; } .panel { padding: 20px; } .address, .favorite-link { min-width: 100%; } }
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand">PYRE &middot; PYRE</div>
+  <h1>PYRE Browser</h1>
+  <p class="intro">Open a favorite or enter a website address.</p>
+
+  <section class="panel" aria-labelledby="address-title">
+    <form id="address-form">
+      <label id="address-title" for="address">Website address</label>
+      <div class="row">
+        <div class="address"><input id="address" type="text" inputmode="url" placeholder="https://example.com" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+        <button class="primary" type="submit">Go</button>
+        <button id="save-address" type="button">Add favorite</button>
+      </div>
+    </form>
+    <div id="address-status" class="status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="favorites-title">
+    <div class="heading-row"><h2 id="favorites-title">Favorites</h2><button id="new-favorite" type="button">Add favorite</button></div>
+    <div id="favorites"></div>
+    <p class="hint">Your changes are saved in this browser on this console. Clearing website data removes saved favorites.</p>
+    <div id="favorites-status" class="status" role="status" aria-live="polite"></div>
+    <form id="favorite-editor" hidden>
+      <h2 id="editor-title">Add favorite</h2>
+      <div class="form-field"><label for="favorite-name">Name</label><input id="favorite-name" type="text" maxlength="120" autocomplete="off"></div>
+      <div class="form-field"><label for="favorite-address">Website address</label><input id="favorite-address" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+      <div class="row"><button class="primary" type="submit">Save favorite</button><button id="cancel-edit" type="button">Cancel</button></div>
+      <div id="editor-status" class="status" role="status" aria-live="polite"></div>
+    </form>
+  </section>
+  <footer>Opening PYRE's favorite runs the hosted PS5 exploit. This browser home stays on the favorites screen until you choose a website. <a href="access.html">First-visit help</a></footer>
+</main>
+<script id="bookmarks-core">
+var PYREBookmarks = (function () {
+  var key = 'haze_browser_favorites_v1';
+  var haze = { name: 'PYRE PS5 Exploit', url: ((location.protocol === 'http:' || location.protocol === 'https:') ? location.origin + '/' : 'http://127.0.0.1:8000/') };
+  function trim(value) { return String(value).replace(/^\s+|\s+$/g, ''); }
+  function normalizeUrl(value) {
+    if (typeof value !== 'string') { throw new Error('Enter a website address.'); }
+    value = trim(value);
+    if (!value) { throw new Error('Enter a website address.'); }
+    if (/[\u0000-\u0020\u007f]/.test(value)) { throw new Error('Website addresses cannot contain spaces.'); }
+    if (value.indexOf('//') === 0) { value = 'https:' + value; }
+    else if (!/^[a-z][a-z0-9+.-]*:/i.test(value)) { value = 'https://' + value; }
+    if (!/^https?:\/\//i.test(value)) { throw new Error('Use an http:// or https:// website address.'); }
+    var link = document.createElement('a');
+    link.href = value;
+    if ((link.protocol !== 'https:' && link.protocol !== 'http:') || !link.hostname) { throw new Error('Enter a valid website address.'); }
+    return link.href;
+  }
+  function array(value) { return Object.prototype.toString.call(value) === '[object Array]'; }
+  function clean(entries) {
+    if (!array(entries)) { throw new Error('Saved favorites are not a list.'); }
+    var result = [], seen = {}, i, item, url, name;
+    for (i = 0; i < entries.length; i++) {
+      item = entries[i];
+      if (!item || typeof item.url !== 'string' || typeof item.name !== 'string') { throw new Error('A saved favorite has invalid fields.'); }
+      url = normalizeUrl(item.url);
+      name = trim(item.name).substring(0, 120);
+      if (!name) { name = url; }
+      if (!seen[url]) { result.push({ name: name, url: url }); seen[url] = true; }
+    }
+    return result;
+  }
+  function copy(entries) {
+    var result = [], i;
+    for (i = 0; i < entries.length; i++) { result.push({ name: entries[i].name, url: entries[i].url }); }
+    return result;
+  }
+  function createStore(storage) {
+    var entries, notice = '', raw;
+    function persist() {
+      try { if (!storage) { throw new Error('Storage unavailable'); } storage.setItem(key, JSON.stringify(entries)); }
+      catch (error) { notice = 'Favorites cannot be saved by this browser. Changes will last for this visit only.'; }
+    }
+    try {
+      if (!storage) { throw new Error('Storage unavailable'); }
+      raw = storage.getItem(key);
+      if (raw === null) { entries = [haze]; persist(); }
+      else {
+        try { entries = clean(JSON.parse(raw)); }
+        catch (error) {
+          entries = [haze];
+          notice = 'Saved favorites could not be read. The starting PYRE favorite has been restored.';
+          persist();
+        }
+      }
+    } catch (error) { entries = [haze]; notice = 'Favorites cannot be saved by this browser. Changes will last for this visit only.'; }
+    return {
+      list: function () { return copy(entries); },
+      save: function (next) { entries = clean(next); persist(); },
+      notice: function () { return notice; }
+    };
+  }
+  return { createStore: createStore, normalizeUrl: normalizeUrl, key: key };
+}());
+</script>
+<script>
+(function () {
+  var storage;
+  try { storage = window.localStorage; } catch (error) { storage = null; }
+  var store = PYREBookmarks.createStore(storage);
+  var editIndex = -1;
+  var favorites = document.getElementById('favorites');
+  var favoriteStatus = document.getElementById('favorites-status');
+  var addressStatus = document.getElementById('address-status');
+  var editor = document.getElementById('favorite-editor');
+  var editorStatus = document.getElementById('editor-status');
+  var nameInput = document.getElementById('favorite-name');
+  var urlInput = document.getElementById('favorite-address');
+  var address = document.getElementById('address');
+  function message(element, text, error) { element.textContent = text; element.className = error ? 'status error' : 'status'; }
+  function closeEditor() { editor.hidden = true; editIndex = -1; }
+  function openEditor(index, url) {
+    editIndex = index;
+    var entries = store.list();
+    document.getElementById('editor-title').textContent = index >= 0 ? 'Edit favorite' : 'Add favorite';
+    nameInput.value = index >= 0 ? entries[index].name : '';
+    urlInput.value = index >= 0 ? entries[index].url : (url || '');
+    message(editorStatus, '', false);
+    editor.hidden = false;
+    nameInput.focus();
+  }
+  function render() {
+    while (favorites.firstChild) { favorites.removeChild(favorites.firstChild); }
+    var entries = store.list();
+    if (entries.length === 0) {
+      var empty = document.createElement('p');
+      empty.textContent = 'No favorites saved. Add a website using the button above.';
+      favorites.appendChild(empty);
+    }
+    function addRow(item, index) {
+      var row = document.createElement('div'); row.className = 'favorite';
+      var link = document.createElement('a'); link.className = 'favorite-link'; link.href = item.url;
+      var name = document.createElement('span'); name.className = 'favorite-name'; name.textContent = item.name;
+      var url = document.createElement('span'); url.className = 'favorite-url'; url.textContent = item.url;
+      link.appendChild(name); link.appendChild(url); row.appendChild(link);
+      var edit = document.createElement('button'); edit.type = 'button'; edit.className = 'small-button'; edit.textContent = 'Edit';
+      edit.setAttribute('aria-label', 'Edit ' + item.name);
+      edit.onclick = function () { openEditor(index); }; row.appendChild(edit);
+      var remove = document.createElement('button'); remove.type = 'button'; remove.className = 'small-button'; remove.textContent = 'Remove';
+      remove.setAttribute('aria-label', 'Remove ' + item.name);
+      remove.onclick = function () {
+        var next = store.list(); next.splice(index, 1); store.save(next); closeEditor(); render();
+        message(favoriteStatus, store.notice() || 'Favorite removed.', false);
+      };
+      row.appendChild(remove); favorites.appendChild(row);
+    }
+    for (var i = 0; i < entries.length; i++) { addRow(entries[i], i); }
+    message(favoriteStatus, store.notice(), false);
+  }
+  document.getElementById('address-form').onsubmit = function (event) {
+    event.preventDefault();
+    try { window.location.href = PYREBookmarks.normalizeUrl(address.value); }
+    catch (error) { message(addressStatus, error.message, true); }
+  };
+  document.getElementById('save-address').onclick = function () {
+    try { openEditor(-1, PYREBookmarks.normalizeUrl(address.value)); message(addressStatus, '', false); }
+    catch (error) { message(addressStatus, error.message, true); }
+  };
+  document.getElementById('new-favorite').onclick = function () { openEditor(-1); };
+  document.getElementById('cancel-edit').onclick = closeEditor;
+  editor.onsubmit = function (event) {
+    event.preventDefault();
+    try {
+      var item = { name: nameInput.value, url: PYREBookmarks.normalizeUrl(urlInput.value) };
+      var next = store.list();
+      if (editIndex >= 0) { next[editIndex] = item; } else { next.push(item); }
+      store.save(next); closeEditor(); render();
+      message(favoriteStatus, store.notice() || 'Favorite saved.', false);
+    } catch (error) { message(editorStatus, error.message, true); }
+  };
+  render();
+}());
+</script>
+</body>
+</html>

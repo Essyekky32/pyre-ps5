@@ -1,0 +1,105 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- PYRE desktop tool (wave 1).
+       A read-only servant of D:\Projects\PYRE: it serves that folder's existing bytes
+       exactly as they are on disk. Nothing in the frozen site is referenced at build
+       time, so Pyre.exe can be dropped into the folder and run from anywhere. -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <!-- Same mark as the PYRE Autoloader's XMB icon: ember flame on charcoal.
+         Copied from pyre-autoloader-src/assets/icon.ico so the exe, the desktop
+         shortcut and the autoloader all read as one product. -->
+    <ApplicationIcon>pyre.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>Pyre</AssemblyName>
+    <RootNamespace>Pyre</RootNamespace>
+    <StartupObject>Pyre.Program</StartupObject>
+    <Version>1.0.0</Version>
+    <Product>PYRE</Product>
+    <Description>PYRE desktop host - serves the PYRE PS5 self-host site on the LAN.</Description>
+    <Company>PYRE</Company>
+    <NeutralLanguage>en</NeutralLanguage>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <EnableDefaultApplicationDefinition>true</EnableDefaultApplicationDefinition>
+  </PropertyGroup>
+
+  <!-- Wave 2: the site is packed at build time and carried INSIDE the exe, so Pyre.exe
+       works from anywhere and never asks the user to keep a folder beside it.
+       PyreSiteRoot is the frozen site folder; publish.ps1 -IncludeOptionalPayloads sets
+       PyreIncludeOptionalPayloads=true to also ship the optional payloads. -->
+  <PropertyGroup>
+    <PyreSiteRoot Condition="'$(PyreSiteRoot)' == ''">$(MSBuildProjectDirectory)\..\..</PyreSiteRoot>
+    <PyreIncludeOptionalPayloads Condition="'$(PyreIncludeOptionalPayloads)' == ''">false</PyreIncludeOptionalPayloads>
+    <PyreSiteAssetDir>$(MSBuildProjectDirectory)\obj\siteassets</PyreSiteAssetDir>
+    <!-- Only passed through when set: a PowerShell switch is on by its presence. -->
+    <PyreOptionalPayloadArg Condition="'$(PyreIncludeOptionalPayloads)' == 'true'">-IncludeOptionalPayloads</PyreOptionalPayloadArg>
+  </PropertyGroup>
+
+  <!-- Wave 3: framework-dependent by default - the user installs the .NET 8 Desktop Runtime
+       (x64) instead of carrying ~63 MB of runtime inside the exe, so Pyre.exe stays small.
+       Publish still bundles the app (and its WPF native bits) into ONE file; only the shared
+       framework is left to the machine. publish.ps1 -SelfContained (self-contained=true on the
+       command line) overrides this back to the fat, install-nothing build. -->
+  <PropertyGroup>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <!-- Compression in a single-file bundle only exists for self-contained publishes
+         (NETSDK1176), so it is switched on by the runtime mode, not unconditionally.
+         It halves the self-contained download (138 MB -> ~60 MB); a framework-dependent
+         build gains nothing from it and must not set it. -->
+    <EnableCompressionInSingleFile Condition="'$(SelfContained)' == 'true'">true</EnableCompressionInSingleFile>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- String tables. One file per language, named by culture code: en.json, de.json, ...
+         Adding a language is dropping the file in and rebuilding - LocalizationService finds
+         it by itself and the dropdown picks it up.
+
+         WithCulture=false is NOT optional here. MSBuild's AssignCulture sees "en" in the file
+         name, decides the resource belongs to culture "en", ships it in a satellite assembly,
+         and then SatelliteResourceLanguages=en drops that satellite - so the table silently
+         vanishes from the build. It cost a debugging round; do not remove it. -->
+    <EmbeddedResource Include="Localization\*.json">
+      <LogicalName>Pyre.Localization.Strings.%(Filename).json</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <!-- The packed site. tool\build-embed.ps1 writes both files into obj\siteassets before
+       the resource pipeline looks at them; the generation target below guarantees they
+       exist first. site.zip holds every shipped file; site-manifest.json holds each one's
+       SHA256, which the runtime checks while it unpacks. -->
+  <ItemGroup>
+    <EmbeddedResource Include="$(PyreSiteAssetDir)\site.zip">
+      <LogicalName>Pyre.Site.site.zip</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PyreSiteAssetDir)\site-manifest.json">
+      <LogicalName>Pyre.Site.site-manifest.json</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <!-- Runs before the resource pipeline (AssignTargetPaths / PrepareResources /
+       CreateManifestResourceNames) so the embedded files exist by the time MSBuild wants
+       them. The script is deterministic and skips rewriting when the site is unchanged. -->
+  <Target Name="GeneratePyreSiteAssets"
+          BeforeTargets="PrepareForBuild;AssignTargetPaths;PrepareResources;CreateManifestResourceNames">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\..\build-embed.ps1&quot; -SiteRoot &quot;$(PyreSiteRoot)&quot; -OutDir &quot;$(PyreSiteAssetDir)&quot; -LogFile &quot;$(PyreSiteAssetDir)\..\siteassets.log&quot; $(PyreOptionalPayloadArg)" />
+  </Target>
+
+</Project>

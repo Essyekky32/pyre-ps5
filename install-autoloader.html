@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="stylesheet" href="haze-menu.css?v=services-1"><title>Install PYRE autoloader | PYRE</title>
+<style>
+  #autoloader-log { font-family: monospace; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 40vh; overflow-y: auto; margin-top: 18px; color: #efdcc9; }
+  #autoloader-error { color: #fff; padding: 12px; border: 2px solid #ff6178; border-radius: 4px; overflow-wrap: anywhere; margin-top: 16px; }
+  #autoloader-status { color: #f6ece3; padding: 8px; border: 1px solid #5c3620; border-left: 3px solid #ff7a18; border-radius: 4px; background: #150f0c; overflow-wrap: anywhere; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body class="haze-page haze-catalog-page"><main class="haze-catalog">
+<a class="haze-back" href="additional.html">← Additional payloads</a>
+<p class="haze-eyebrow">PYRE / AUTOLOADER</p>
+<h1 class="haze-title">Install the PYRE autoloader</h1>
+<p class="haze-intro">This page does one thing: it pushes <code>our-payloads/pyre-autoloader-installer_v0.5.2-pyre.elf</code> to your console's ELF loader, so the console installs the PYRE autoloader &mdash; the permanent entry point that brings the exploit back after a restart.</p>
+<div class="haze-notice" role="status">This is <strong>not</strong> RUN PYRE. It sends no exploit sequence: no kstuff, no ShadowMountPlus, no etaHEN, no Payload Manager, no App Dumper and no browser installer. For the normal sequence, go back and press RUN PYRE on the PYRE menu.</div>
+<div class="haze-notice" role="status">It needs the console already jailed in this session: the loader it talks to (port 9021) only exists once the exploit has been run. If the loader is not answering, this page says so plainly and stops &mdash; it cannot start the exploit for you.</div>
+<div class="haze-actions"><button type="button" class="haze-pill" id="install-autoloader">Install the PYRE autoloader</button><a class="haze-pill secondary" href="index.html">PYRE menu</a></div>
+<p id="autoloader-error" role="alert" hidden></p>
+<p id="autoloader-status" role="status">Latest status: nothing sent yet. Press the button to push the autoloader ELF.</p>
+<div id="autoloader-log"></div>
+<p class="haze-help">Pushes one file and nothing else. The console's ELF loader (port 9021) is started by RUN PYRE; this page never starts it.</p>
+</main>
+<script src="./src/firmware.js"></script>
+<script src="./haze-main.js?v=restart-guard-1"></script>
+<script src="./src/rop.js?v=aio-trace-1"></script>
+<script src="./src/utils/syscalls.js"></script>
+<script type="module" src="./install-autoloader.js?v=pyre-autoloader-1"></script>
+</body></html>

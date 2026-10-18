@@ -1,0 +1,628 @@
+@import "./assets/emoji/sprites.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/** 
+ * LEGACY FALLBACKS
+ * These ensure basic functionality on PS5 firmware < 5.0 (Safari < 15.4)
+ * which does not support CSS Cascading Layers (@layer).
+ */
+.hidden { display: none !important; }
+.flex { display: flex !important; }
+/* NOTE: flex-col must NOT have !important so md:flex-row can override it */
+.flex-col { flex-direction: column; }
+.items-center { align-items: center !important; }
+.justify-center { justify-content: center !important; }
+.ps5-bg { background-color: var(--color-ps-black) !important; }
+.text-white { color: #f6ece3 !important; }
+.text-zinc-100 { color: #f6ece3 !important; }
+.text-zinc-300 { color: #ecd9c8 !important; }
+.text-zinc-400 { color: #c9a893 !important; }
+.text-ps-blue { color: #ff7a18 !important; }
+@media (min-width: 768px) {
+  .md\:hidden { display: none !important; }
+  .md\:flex { display: flex !important; }
+  .md\:flex-row { flex-direction: row !important; }
+  .md\:flex-col { flex-direction: column !important; }
+  .md\:flex-1 { flex: 1 1 0% !important; }
+  .md\:overflow-hidden { overflow: hidden !important; }
+  .md\:overflow-y-auto { overflow-y: auto !important; }
+  .md\:items-start { align-items: flex-start !important; }
+  .md\:items-center { align-items: center !important; }
+  .md\:justify-center { justify-content: center !important; }
+  .md\:h-screen { height: 100vh !important; }
+  .md\:min-h-0 { min-height: 0 !important; }
+  .md\:sticky { position: sticky !important; }
+  .md\:top-0 { top: 0 !important; }
+  .md\:space-x-24 > * + * { margin-left: 6rem !important; }
+  .md\:space-y-0 > * + * { margin-top: 0 !important; }
+  .md\:space-y-6 > * + * { margin-top: 1.5rem !important; }
+  .md\:space-y-8 > * + * { margin-top: 2rem !important; }
+  .md\:space-y-12 > * + * { margin-top: 3rem !important; }
+  
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  
+  .md\:gap-4 { gap: 1rem !important; }
+  .md\:gap-6 { gap: 1.5rem !important; }
+  .md\:gap-8 { gap: 2rem !important; }
+  .md\:gap-12 { gap: 3rem !important; }
+  
+  .md\:p-6 { padding: 1.5rem !important; }
+  .md\:p-8 { padding: 2rem !important; }
+  .md\:p-12 { padding: 3rem !important; }
+  .md\:px-16 { padding-left: 4rem !important; padding-right: 4rem !important; }
+  .md\:pt-16 { padding-top: 4rem !important; }
+  .md\:pb-12 { padding-bottom: 3rem !important; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:flex { display: flex !important; }
+  .lg\:grid { display: grid !important; }
+  .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .lg\:block { display: block !important; }
+  .lg\:hidden { display: none !important; }
+}
+
+:root {
+  /* PYRE palette. Sibling to the PYRE autoloader so the two apps read as one
+     family: warm charcoal instead of near-black, ember instead of PS blue.
+     These tokens are what every --color-ps-* consumer follows, including the
+     glow variables used by the neon and glass rules further down. */
+  --color-ps-blue: #ff7a18;                  /* accent: ember (name kept so every
+                                                existing utility keeps working) */
+  --color-ps-blue-glow: rgba(255, 122, 24, 0.35);
+  --color-ps-black: #0c0a09;                 /* base charcoal */
+  --color-ps-surface: #150f0c;               /* panels */
+  --color-ps-card: rgba(26, 16, 9, 0.85);    /* cards */
+  --color-ps-border: rgba(255, 174, 99, 0.12); /* warm border, not white */
+
+  --font-inter: "Inter", system-ui, sans-serif;
+
+  --radius-ps-xl: 1rem;
+  --radius-ps-2xl: 1.5rem;
+  --radius-ps-3xl: 2rem;
+}
+
+/* @theme removed - Tailwind 4 only directive, using tailwind.config.js instead */
+
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  height: 100%;
+  height: -webkit-fill-available;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-ps-black);
+  color: #f6ece3;
+  font-family: var(--font-inter);
+  font-size: 16px; /* Default for mobile/web */
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (min-width: 768px) {
+  body {
+    overflow: hidden;
+    height: 100vh;
+    font-size: 20px; /* Larger for TV/Large Screens */
+  }
+}
+
+.ps5-bg {
+  background-color: var(--color-ps-black);
+  /* background-image: 
+    radial-gradient(circle at 0% 0%, rgba(0, 149, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(0, 149, 255, 0.03) 0%, transparent 50%); */
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3a1d0a;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ps-blue);
+}
+
+/* Glassmorphism & Cards */
+.glass-panel {
+  background: var(--color-ps-surface);
+  border-right: 1px solid var(--color-ps-border);
+/* backdrop-filter: blur(12px); */
+}
+
+.glass-card {
+  background: var(--color-ps-card);
+  border: 1px solid var(--color-ps-border);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+/* box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5); */
+}
+
+.glass-card:hover, .glass-card:focus {
+  background: rgba(58, 29, 10, 0.95);
+  border-color: var(--color-ps-blue);
+  transform: translateY(-2px);
+/* box-shadow: 0 0 30px var(--color-ps-blue-glow); */
+  outline: none;
+}
+
+/* Sidebar Item Focus */
+button:focus {
+  outline: none;
+}
+
+/* Neon Glows */
+.neon-text {
+/* text-shadow: 0 0 10px var(--color-ps-blue-glow); */
+}
+
+.neon-border {
+/* box-shadow: 0 0 15px var(--color-ps-blue-glow); */
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.label-caps {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+  color: #a1a1aa; /* Increased contrast from #71717a */
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@-webkit-keyframes spin {
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
+
+.animate-fade-in {
+  /* animation: fadeIn 0.4s ease-out forwards; */
+}
+
+.animate-spin {
+  /* animation: spin 1s linear infinite;
+  -webkit-animation: spin 1s linear infinite; */
+  transform-origin: center;
+  -webkit-transform-origin: center;
+  will-change: transform;
+}
+
+/* Robust PS5 Spinner - Using unique keyframe name and solid borders */
+.ps5-robust-spinner {
+  width: 6rem;
+  height: 6rem;
+  border: 8px solid rgba(255, 255, 255, 0.05);
+  border-left-color: var(--color-ps-blue);
+  border-radius: 50%;
+  animation: ps5-native-spin 1s linear infinite;
+  -webkit-animation: ps5-native-spin 1s linear infinite;
+  will-change: transform;
+}
+
+@keyframes ps5-native-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@-webkit-keyframes ps5-native-spin {
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+
+@keyframes marquee-alternate {
+  0%, 15% { transform: translateX(0); }
+  85%, 100% { transform: translateX(calc(-1 * var(--scroll-amount, 0px))); }
+}
+
+button:hover .animate-marquee,
+button:focus .animate-marquee,
+.group:hover .animate-marquee,
+.group:focus-within .animate-marquee {
+  animation: marquee-alternate 4s ease-in-out infinite alternate;
+}
+
+/* ==========================================================================
+   README / Markdown Typography (.markdown-body)
+   Explicit rules to overcome Tailwind's element reset and style READMEs/docs
+   ========================================================================== */
+
+.markdown-body {
+  color: #d4d4d8; /* zinc-300 */
+  font-size: 0.95rem;
+  line-height: 1.7;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .markdown-body {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+}
+
+.markdown-body p,
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6,
+.markdown-body li,
+.markdown-body blockquote {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.markdown-body > *:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Headings */
+.markdown-body h1 {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+}
+
+.markdown-body h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.markdown-body h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 1.5rem;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+}
+
+.markdown-body h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f4f4f5;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-body h5,
+.markdown-body h6 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+/* Paragraphs */
+.markdown-body p {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  color: #d4d4d8;
+  line-height: 1.7;
+}
+
+.markdown-body p:empty {
+  display: none;
+}
+
+/* Lists - explicitly restore bullet/numbered styles reset by Tailwind */
+.markdown-body ul {
+  list-style-type: disc !important;
+  margin-top: 0.6rem;
+  margin-bottom: 0.8rem;
+  padding-left: 1.75rem !important;
+}
+
+.markdown-body ol {
+  list-style-type: decimal !important;
+  margin-top: 0.6rem;
+  margin-bottom: 0.8rem;
+  padding-left: 1.75rem !important;
+}
+
+.markdown-body li {
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+  line-height: 1.65;
+  color: #d4d4d8;
+}
+
+.markdown-body li > ul {
+  list-style-type: circle !important;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  padding-left: 1.25rem !important;
+}
+
+.markdown-body li > ol {
+  list-style-type: lower-roman !important;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  padding-left: 1.25rem !important;
+}
+
+.markdown-body li > p {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Links */
+.markdown-body a {
+  color: var(--color-ps-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(0, 149, 255, 0.4);
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.markdown-body a:hover {
+  color: #ffffff;
+  text-decoration-color: #ffffff;
+}
+
+/* Inline Code */
+.markdown-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85em;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #38bdf8; /* light sky blue */
+  padding: 0.2em 0.4em;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Code Blocks */
+.markdown-body pre {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+.markdown-body pre code {
+  background-color: transparent !important;
+  color: #e4e4e7 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-size: 0.85rem !important;
+  white-space: pre;
+}
+
+/* Blockquotes */
+.markdown-body blockquote {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-left: 4px solid var(--color-ps-blue);
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 0 0.75rem 0.75rem 0;
+  color: #cbd5e1;
+}
+
+.markdown-body blockquote > *:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Horizontal Rule */
+.markdown-body hr {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 1.75rem;
+  margin-bottom: 1.75rem;
+}
+
+/* Tables */
+.markdown-body table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.markdown-body th {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: left;
+}
+
+.markdown-body td {
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d4d4d8;
+}
+
+.markdown-body tr:nth-child(even) td {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.markdown-body strong {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.markdown-body em {
+  font-style: italic;
+  color: #e4e4e7;
+}
+
+/* ==========================================================================
+   PYRE theme layer
+   --------------------------------------------------------------------------
+   Appended last on purpose. Everything above keeps working untouched; these
+   rules win by document order wherever they redeclare a selector, so the app
+   gets a PYRE identity without editing a single component.
+
+   Palette: ember #ff7a18 / #ffae63 · charcoal #0c0a09 / #150f0c · cream #f6ece3
+   ========================================================================== */
+
+::selection {
+  background: rgba(255, 122, 24, 0.30);
+  color: #fff8f2;
+}
+
+/* A warm ember wash instead of a flat black page: depth with no image asset. */
+body {
+  background-image:
+    radial-gradient(120% 80% at 50% -10%, rgba(255, 122, 24, 0.10) 0%, rgba(255, 122, 24, 0) 60%),
+    radial-gradient(80% 60% at 100% 100%, rgba(255, 174, 99, 0.05) 0%, rgba(255, 174, 99, 0) 55%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Cards get a faint lit rim along the top edge. */
+.glass-card {
+  border-top-color: rgba(255, 122, 24, 0.28);
+}
+
+/* Warm focus ring - this is what you see when moving around with a controller
+   or keyboard, so it carries a lot of the theme. */
+button:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid rgba(255, 122, 24, 0.65);
+  outline-offset: 2px;
+}
+
+/* Renderable payload docs (details/*.md) - warm the prose to match. */
+.markdown-body {
+  color: #ecd9c8;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  color: #f6ece3;
+}
+
+.markdown-body strong {
+  color: #ffae63;
+}
+
+.markdown-body em {
+  color: #ecd9c8;
+}
+
+.markdown-body a {
+  color: #ffae63;
+}
+
+.markdown-body code {
+  background: rgba(58, 29, 10, 0.65);
+  color: #ffcda1;
+}
+
+.markdown-body pre {
+  background: #050302;
+  border: 1px solid rgba(255, 174, 99, 0.16);
+}
+
+.markdown-body th {
+  border-color: rgba(255, 174, 99, 0.18);
+  color: #f6ece3;
+}
+
+.markdown-body td {
+  border-color: rgba(255, 174, 99, 0.12);
+  color: #ecd9c8;
+}
+
+.markdown-body tr:nth-child(even) td {
+  background-color: rgba(255, 174, 99, 0.03);
+}
+
+.markdown-body blockquote {
+  border-left-color: #ff7a18;
+  color: #c9a893;
+  background: rgba(58, 29, 10, 0.35);
+}
+
+.markdown-body hr {
+  border-color: rgba(255, 174, 99, 0.18);
+}
