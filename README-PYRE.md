@@ -69,9 +69,9 @@ Silence means nothing in the logic has moved.
 
 ## Caveats worth remembering
 
-- **Validated on 13.42, not 13.60.** It is the exploit itself that covers 7.00–13.60.
-  The autoload sequence in this bundle was only console-tested on 13.42. The footer says
-  the supported range, not that this exact bundle has been proven on 13.60.
+- **Validated on 13.60.** Run end to end on our own 13.60 console — host, DNS, guide and
+  payloads. The 13.42 testing on record is upstream's, not ours; the exploit itself covers
+  7.00–13.60.
 - **The kernel stage can still hang or panic.** Expect roughly a 40% panic rate. Best
   odds: fresh boot, console offline, nothing else running, and always reboot after a
   failure rather than retrying on a dirty state.
@@ -98,4 +98,4 @@ etaHEN — LightningMods and contributors. Bundle font — Noto Sans (OFL, see
 `HazeUI-LICENSE.txt`). Original `LICENSE` retained. Per-payload notices in
 `OPTIONAL-PAYLOAD-NOTICES.txt` and `payload-sources.json`.
 
-Upstream docs are preserved untouched in `README.md`.
+Upstream docs are preserved untouched in `UPSTREAM-README.md`.
