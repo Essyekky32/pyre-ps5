@@ -14,6 +14,11 @@
 <p class="haze-eyebrow">PYRE / LAUNCH PAYLOADS</p>
 <h1 class="haze-title">Send a payload</h1>
 <p class="haze-intro">Every card below is a working button. Pressing one downloads that file from this PC, checks it against the catalogue, and pushes it to your console's ELF loader. It also files the payload into <strong>PYRE Payloads</strong>, so you can launch it again from the manager later &mdash; including after a restart. All of them ship beside <code>Pyre.exe</code>, so there is nothing to download and nothing to upload.</p>
+<!-- The autoloader is deliberately NOT a card in the grid: it installs a homescreen app
+     rather than pushing a payload, so it has its own page. Keep this button here, at the
+     top, because it is the first thing people look for and the bottom-of-page text link
+     was being missed. -->
+<div class="haze-actions"><a class="haze-pill" href="install-autoloader.html">Install the PYRE Autoloader</a></div>
 <div class="haze-notice" role="status">This is <strong>not</strong> RUN PYRE. It starts no exploit: no kernel stage, no kstuff, no ShadowMountPlus, no etaHEN. If the console is not already jailbroken in this session, every button fails fast with a plain explanation and sends nothing.</div>
 <div class="haze-notice" role="status">Open this page the same way you reached PYRE &mdash; normally through the console's User's Guide. Payloads are checksum-verified, and that check is only available on a secure page.</div>
 <div class="haze-actions"><button type="button" class="haze-pill secondary" id="payloads-reload">Reload this page</button><a class="haze-pill secondary" href="index.html">PYRE menu</a></div>
@@ -21,7 +26,7 @@
 <p id="payloads-status" role="status">Latest status: nothing sent yet.</p>
 <div id="haze-live-cards" class="haze-grid"></div>
 <div id="payloads-log"></div>
-<p class="haze-help">Payloads are sent one at a time, straight to the console's loader on port 9021. A transfer is not proof the payload started &mdash; watch the console's notifications. The PYRE autoloader installs from <a href="install-autoloader.html">its own page</a>. Everything above ships beside <code>Pyre.exe</code>.</p>
+<p class="haze-help">Payloads are sent one at a time, straight to the console's loader on port 9021. A transfer is not proof the payload started &mdash; watch the console's notifications. The PYRE autoloader is the button at the top of this page &mdash; it installs a homescreen app, not a payload. Everything above ships beside <code>Pyre.exe</code>.</p>
 <p class="haze-help"><strong>Other developers' tools. Not included with PYRE.</strong> Nothing below is shipped and none of it has a button here. These are links to the original releases, kept for credit and in case you want them: download one, then upload it in PYRE Payloads or push it from Pyre on the PC.</p>
 <ul class="haze-help">
 <li><a href="https://git.etawen.dev/earthonion/garlic-savemgr/releases">Garlic Savemgr</a> &mdash; v1.13.1, earthonion</li>
