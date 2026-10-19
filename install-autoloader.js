@@ -25,8 +25,8 @@ const AUTOLOADER = {
   id: "pyre-autoloader",
   title: "PYRE autoloader installer",
   file: "/our-payloads/pyre-autoloader-installer_v0.5.2-pyre.elf",
-  bytes: 2278736,
-  sha256: "2226f9b519280df117634a64d1b4ca3eb483b46fbb762e36241a046b3ed70a8b",
+  bytes: 2966864,
+  sha256: "34df70f5057e6c321c3209dca27e179fa224557b66557f75e178eb9b242a899b",
 };
 
 const logBox = document.getElementById("autoloader-log");

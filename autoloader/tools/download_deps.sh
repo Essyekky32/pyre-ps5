@@ -179,4 +179,19 @@ PAYLOAD_TAG=$(git -C "$PAYLOAD_SUBMODULE" describe --tags --always)
 
 download_release "$ELFLDR_REPO" "$ELFLDR_TAG" "$ELFLDR_DEST"
 download_release "$KEXP_REPO" "$KEXP_TAG" "$KEXP_DEST"
-download_release "$PAYLOAD_REPO" "$PAYLOAD_TAG" "$PAYLOAD_DEST"
+
+# PYRE: the bundled boot payload is OURS (PYRE Payloads), never upstream's.
+#
+# Upstream's pinned ps5-unified-autoloader release ships the STOCK Payload
+# Manager as payload.elf. Autoloading that meant every boot ran the stock build,
+# which reinstalled the plain "Payload Manager" app over PYRE Payloads under the
+# same title ID (PLDM00001) - the "it updated again and ours was gone" bug.
+# Keeping the file already in the tree makes the swap stick; upstream's copy is
+# only fetched if ours is genuinely missing.
+if [ -s "$PAYLOAD_DEST" ]; then
+    rm -f "$PAYLOAD_DEST.sha256"
+    echo "payload.elf present - keeping PYRE's own payload (upstream stock build not fetched)."
+else
+    download_release "$PAYLOAD_REPO" "$PAYLOAD_TAG" "$PAYLOAD_DEST"
+fi
+
