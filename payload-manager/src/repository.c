@@ -264,7 +264,10 @@ size_t repository_list_json(char *json_buf, size_t buf_size, int force_refresh) 
 }
 
 
-/* Self-updates deliberately retain the pre-slot layout: old launchers scan it. */
+/* Self-updates deliberately retain the pre-slot layout: old launchers scan it.
+ *
+ * PYRE: this build is the one that ships, so the whole self-update feature is
+ * disabled — see check_self_update() and repository_install_self_update(). */
 static pthread_mutex_t self_update_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static int self_version_valid(const char *version) {
@@ -282,13 +285,16 @@ static int self_version_valid(const char *version) {
 }
 
 int repository_self_update_entry_valid(const RepoPayload *entry, const char *source_url) {
-    if (!entry || !is_pldmgr_official_source(source_url) || strcmp(entry->id, "pldmgr") ||
-        !is_pldmgr_name(entry->filename) || strchr(entry->filename, '/') ||
-        strchr(entry->filename, '\\') || strstr(entry->filename, "..") ||
-        !self_version_valid(entry->version) || !entry->checksum[0] ||
-        !repository_checksum_valid(entry->checksum)) return 0;
-    const char *ext = strrchr(entry->filename, '.');
-    return ext && (!strcasecmp(ext, ".elf") || !strcasecmp(ext, ".bin"));
+    /* PYRE: no repository entry is ever a valid self-update for this build.
+     *
+     * One predicate gates all three ways upstream could replace us: the
+     * download+install route (sources.c), publication into payloads/pldmgr
+     * (repository_install_self_update), and the repository listing itself.
+     * With this false, a stock Payload Manager can never be staged, and the
+     * app's homescreen tile (PLDM00001) stays PYRE Payloads. */
+    (void)entry;
+    (void)source_url;
+    return 0;
 }
 
 int repository_self_update_version_fd(int fd, char *version, size_t size) {
@@ -328,32 +334,19 @@ static int check_self_update(char *out_path, size_t size, char *version, size_t 
     if (!out_path || !size || !version || version_size < 64) return 0;
     out_path[0] = 0;
     snprintf(version, version_size, "%s", MENU_VERSION);
-    DIR *root = opendir(PAYLOADS_STORAGE_DIR);
-    if (!root) return 0;
-    struct dirent *dir;
-    while ((dir = readdir(root))) {
-        if (strcasecmp(dir->d_name, "pldmgr") && strcasecmp(dir->d_name, "payload-manager")) continue;
-        char folder[768];
-        snprintf(folder, sizeof(folder), "%s/%s", PAYLOADS_STORAGE_DIR, dir->d_name);
-        DIR *d = opendir(folder);
-        if (!d) continue;
-        struct dirent *file;
-        while ((file = readdir(d))) {
-            char path[1024], candidate[64];
-            snprintf(path, sizeof(path), "%s/%s", folder, file->d_name);
-            int fd = slot_open_self_update(path);
-            if (fd < 0) continue;
-            int valid = repository_self_update_version_fd(fd, candidate, sizeof(candidate));
-            close(fd);
-            if (!valid && slot_version_compare(candidate, version) > 0 && strlen(path) < size) {
-                strcpy(version, candidate);
-                strcpy(out_path, path);
-            }
-        }
-        closedir(d);
-    }
-    closedir(root);
-    return out_path[0] != 0;
+
+    /* PYRE: never look for a Payload Manager ELF on disk to hand off to.
+     *
+     * Upstream scanned payloads/pldmgr and payloads/payload-manager for an ELF
+     * carrying a newer PLDMGR_VER marker; main() then launched it and exited.
+     * The ELF it found was the stock upstream build, which on startup runs its
+     * own auto-install-app and writes the stock app over title ID PLDM00001 —
+     * replacing PYRE Payloads' homescreen tile with a plain "Payload Manager".
+     * That is the reported bug ("it said updating and ours was gone").
+     *
+     * Returning "nothing pending" here is what keeps this build the only
+     * Payload Manager that ever runs on the console. */
+    return 0;
 }
 
 int repository_check_self_update(char *out_path, size_t size, char *version, size_t version_size) {

@@ -88,12 +88,13 @@ int main(int argc, char *argv[]) {
 
     /* The loader transfer may encounter a closed socket before services start. */
     signal(SIGPIPE, SIG_IGN);
-    char update_path[1024], update_version[64];
-    if (repository_check_self_update(update_path, sizeof(update_path), update_version, sizeof(update_version))) {
-        pldmgr_log("[PLDMGR] Handing off to self-update %s\n", update_version);
-        if (ps5_launch_self_update(update_path) == 0) return 0;
-        pldmgr_log("[PLDMGR] Self-update handoff failed; continuing startup.\n");
-    }
+
+    /* PYRE: no self-update check here on purpose. Upstream called
+     * repository_check_self_update() at this point and, if it found a newer
+     * Payload Manager ELF in payloads/pldmgr, launched it and returned — that
+     * stock build then re-installed the stock "Payload Manager" app over ours
+     * (title ID PLDM00001), which is how PYRE Payloads went missing. This build
+     * is the one that ships, so it never looks for a replacement. */
 
     /* Initialize PS5 System Services */
     pldmgr_log("[PLDMGR] Initializing system services...\n");

@@ -19,7 +19,7 @@
     <AssemblyName>Pyre</AssemblyName>
     <RootNamespace>Pyre</RootNamespace>
     <StartupObject>Pyre.Program</StartupObject>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Product>PYRE</Product>
     <Description>PYRE desktop host - serves the PYRE PS5 self-host site on the LAN.</Description>
     <Company>PYRE</Company>

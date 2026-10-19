@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Self-update storage and loader handoff with local fixtures and recorded sockets."""
+"""Self-update is disabled: newer ELFs on disk are ignored, nothing is published, no handoff."""
 import hashlib
 import json
 import os
@@ -63,10 +63,13 @@ with tempfile.TemporaryDirectory(prefix='pldmgr-self-') as temp:
     low.write_bytes(elf('90.0.0'))
     high = alias / 'payload-manager_v91.0.0.bin'
     high.write_bytes(elf('91.0.0', 8179))  # marker crosses a read boundary
-    assert run('scan').splitlines() == ['1 91.0.0', str(high)]
-    assert run('self', high) == '0 1 0'
+    # PYRE: self-update is disabled in this build. A newer Payload Manager ELF
+    # sitting in the storage is never found, never launched and never published,
+    # so the stock build cannot take this app's homescreen tile back.
+    assert run('scan') == '0 ' + current
+    assert run('self', high) == '-1 0 0'
+    assert run('self', high, FAIL_LAUNCH='1') == '-1 0 0'
     assert run('launch', high) == '-1 0 0'
-    assert run('self', high, FAIL_LAUNCH='1') == '-1 1 0'
     external = build / 'pldmgr_external.elf'
     external.write_bytes(elf('999.0.0'))
     link = legacy / 'pldmgr_link.elf'
@@ -75,8 +78,9 @@ with tempfile.TemporaryDirectory(prefix='pldmgr-self-') as temp:
     assert run('self', external) == '-1 0 0'
     assert run('migrate') == '0 0'
     assert equal.exists() and high.exists() and low.exists()
+    before = sorted(p.name for p in legacy.iterdir())
     listing = json.loads(run('list'))
-    assert listing['self'] == {'id': 'pldmgr', 'running_version': current, 'pending_version': '91.0.0'}
+    assert listing['self'] == {'id': 'pldmgr', 'running_version': current, 'pending_version': ''}
     assert not listing['items'] and not listing['payloads']
 
     fixture = build / 'download.elf'
@@ -91,7 +95,8 @@ with tempfile.TemporaryDirectory(prefix='pldmgr-self-') as temp:
     (data / 'sources.json').write_text(json.dumps({'sources': [{'id': 'custom', 'name': 'Custom', 'url': custom}]}))
     (data / 'pldmgr_config.txt').write_text('MULTI_SOURCES_ENABLED=1\n')
     catalog = json.loads(run('catalog'))
-    assert [p['id'] for p in catalog['sources'][0]['payloads']] == ['pldmgr']
+    # The manager is never offered as an update, from any source.
+    assert not catalog['sources'][0]['payloads']
     assert not catalog['sources'][1]['payloads']
     assert not json.loads(run('install', custom))['ok']
     assert not json.loads(run('install', official, 'keep_both'))['ok']
@@ -105,17 +110,15 @@ with tempfile.TemporaryDirectory(prefix='pldmgr-self-') as temp:
     for fault in ['FAIL_RENAME', 'FAIL_SYNC']:
         assert not json.loads(run('install', official, UPDATE_FIXTURE=str(fixture), **{fault: '1'}))['ok']
         assert low.read_bytes() == elf('90.0.0') and high.read_bytes() == elf('91.0.0', 8179)
-    result = json.loads(run('install', official+'/', UPDATE_FIXTURE=str(fixture)))
-    assert result['ok'] and result['self_update'] and result['restart_required'], result
-    installed = legacy / entry['filename']
-    assert installed.read_bytes() == fixture.read_bytes()
-    assert list(legacy.iterdir()) == [installed]
-    assert not json.loads(run('install', official, UPDATE_FIXTURE=str(fixture)))['ok']
-    assert run('scan').splitlines() == ['1 92.0.0', str(installed)]
+    # The one install that used to be accepted. It must fail, publish nothing,
+    # leave no staging file behind, and never become a pending update.
+    assert not json.loads(run('install', official+'/', UPDATE_FIXTURE=str(fixture)))['ok']
+    assert not (legacy / entry['filename']).exists()
     assert not list(payloads.glob('.download-*'))
-    assert json.loads(run('list'))['self']['pending_version'] == '92.0.0'
-    assert run('self', installed) == '0 1 0'
-    assert run('launch', installed) == '-1 0 0'
+    assert sorted(p.name for p in legacy.iterdir()) == before
+    assert run('scan') == '0 ' + current
+    assert json.loads(run('list'))['self']['pending_version'] == ''
+    assert run('self', fixture) == '-1 0 0'
     usb = build / 'usb0' / 'pldmgr'
     usb.mkdir(parents=True)
     for name in ['pldmgr_v99.0.0.elf', 'payload-manager.bin', 'PAYLOAD_MANAGER.elf']:
@@ -123,4 +126,4 @@ with tempfile.TemporaryDirectory(prefix='pldmgr-self-') as temp:
         path.write_bytes(elf('99.0.0'))
         assert run('guards', name, path) == '-1 -1 -1 -1'
         assert path.exists()
-    print('Self-update: official-only install, validation, pending status, migration, guards and recorded handoff passed')
+    print('Self-update disabled: newer ELFs ignored, nothing published, no pending status, no handoff - migration and USB guards still passed')

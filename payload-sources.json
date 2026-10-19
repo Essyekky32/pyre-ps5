@@ -11,7 +11,7 @@
         "fw":  null,
         "id":  "manager",
         "bytes":  3435056,
-        "sha256":  "a0fd5534eaffaec0f8abd97f12c8ac32fd45295b853f3d1944233c4b3636e593",
+        "sha256":  "5ced2bfd09ce6e878be748288ecfaaa29341436d3c86f26bb2125fc053d15e0e",
         "source":  "https://github.com/itsPLK/ps5-payload-manager",
         "sourceArchive":  "",
         "loaderOnly":  false,

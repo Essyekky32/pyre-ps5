@@ -9,7 +9,7 @@ export const payloads = [
     "title": "PYRE Payloads",
     "version": "0.6.1-pyre",
     "file": "our-payloads/pyre-payloads_pldmgr_v0.6.1-pyre.elf",
-    "sha256": "a0fd5534eaffaec0f8abd97f12c8ac32fd45295b853f3d1944233c4b3636e593",
+    "sha256": "5ced2bfd09ce6e878be748288ecfaaa29341436d3c86f26bb2125fc053d15e0e",
     "bytes": 3435056,
     "description": "Dashboard to manage, import and auto-load payloads. PYRE build: v0.6.1 base, re-themed, renamed, install-from-list removed - upload payloads directly.",
     "author": "Essy (based on itsPLK)",

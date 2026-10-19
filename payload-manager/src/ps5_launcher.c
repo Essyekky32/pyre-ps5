@@ -111,7 +111,19 @@ static int launch_elf(const char *path, PayloadLaunchCancelled cancelled, void *
 int ps5_launch_elf_cancellable(const char *path, PayloadLaunchCancelled cancelled, void *context) {
     return launch_elf(path, cancelled, context, 0);
 }
-int ps5_launch_self_update(const char *path) { return launch_elf(path, NULL, NULL, 1); }
+int ps5_launch_self_update(const char *path) {
+    /* PYRE: refuse to launch any Payload Manager ELF as a self-update.
+     *
+     * Upstream used this to hand the console over to a newer build it found on
+     * disk, and that stock build reinstalled the stock "Payload Manager" app
+     * over ours. Nothing in this build calls this any more (see main.c), and
+     * with the check and install routes disabled nothing can find an ELF to
+     * pass here either - this is the last thread, cut on purpose. */
+    (void)path;
+    pldmgr_log("[PLDMGR] Self-update is disabled in this build; not launching %s\n",
+               path ? path : "(null)");
+    return -1;
+}
 int ps5_launch_elf(const char *path) { return ps5_launch_elf_cancellable(path,NULL,NULL); }
 
 extern int sceSystemServiceLaunchWebBrowser(const char *uri);
